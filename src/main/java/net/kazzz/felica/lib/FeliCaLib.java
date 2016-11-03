@@ -84,7 +84,7 @@ public final class FeliCaLib {
     public static final int SYSTEMCODE_COMMON = 0xfe00;      // 共通領域
     public static final int SYSTEMCODE_CYBERNE = 0x0003;     // サイバネ領域
     public static final int SYSTEMCODE_EDY = 0xfe00;         // Edy (=共通領域)
-    public static final int SYSTEMCODE_OCTOPUS = 0x0880;     // Octopus (Hong Kong)
+    public static final int SYSTEMCODE_OCTOPUS = 0x8008;     // Octopus (Hong Kong)
     public static final int SYSTEMCODE_SUICA = 0x0003;       // Suica (=サイバネ領域)
     public static final int SYSTEMCODE_PASMO = 0x0003;       // Pasmo (=サイバネ領域)
     // サービスコード suica/pasmo (little endian)
@@ -623,21 +623,19 @@ public final class FeliCaLib {
         final byte[] systemCode;
 
         /**
-         * コンストラクタ
+         * Create a new system code.
          *
-         * @param bytes バイト列をセット
+         * @param bytes Bytes passed in little endian
          */
         public SystemCode(byte[] bytes) {
-            this.systemCode = bytes;
+            this.systemCode = new byte[]{bytes[1], bytes[0]};
         }
 
         public SystemCode(int systemCode) {
-            this(new byte[]{(byte) (systemCode & 0xff), (byte) (systemCode >> 8)});
+            // Pass in a system code in "big endian" form
+            this(new byte[]{(byte) (systemCode >> 8), (byte) (systemCode & 0xff)});
         }
 
-        /* (non-Javadoc)
-        * @see net.felica.IFeliCaByteData#getBytes()
-        */
         @Override
         public byte[] getBytes() {
             return this.systemCode;
@@ -651,6 +649,11 @@ public final class FeliCaLib {
             return ("SystemCode : " + Util.getHexString(this.systemCode) + "\n");
         }
 
+        /**
+         * Returns the system code in Big Endian
+         *
+         * @return
+         */
         public int getCode() {
             return (this.systemCode[0] & 0xff) + ((this.systemCode[1] & 0xff) << 8);
         }

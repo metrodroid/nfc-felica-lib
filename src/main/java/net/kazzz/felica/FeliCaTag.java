@@ -123,7 +123,7 @@ public class FeliCaTag extends NfcTag {
     /**
      * カードデータをポーリングします
      *
-     * @param systemCode 対象のシステムコードをセットします
+     * @param systemCode System code to request in Big Endian (ie: no byte swap needed)
      * @throws FeliCaException
      * @return　byte[] システムコードの配列が戻ります
      */
@@ -133,8 +133,8 @@ public class FeliCaTag extends NfcTag {
         }
         CommandPacket polling =
                 new CommandPacket(COMMAND_POLLING
-                        , (byte) (systemCode & 0xff)
                         , (byte) (systemCode >> 8)  // システムコード
+                        , (byte) (systemCode & 0xff)
                         , (byte) 0x01              //　システムコードリクエスト
                         , (byte) 0x00);           // タイムスロット};
         CommandResponse r = FeliCaLib.execute(this.nfcTag, polling);
