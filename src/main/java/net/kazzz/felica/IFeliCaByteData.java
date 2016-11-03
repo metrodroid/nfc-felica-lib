@@ -13,16 +13,16 @@ package net.kazzz.felica;
 
 /**
  * FeliCaで使用するバイトデータを抽象化したインタフェース
- * 
+ *
  * @author Kazzz
  * @date 2011/01/21
  * @since Android API Level 9
- *
  */
 
 public interface IFeliCaByteData {
     /**
      * バイト列を取得します
+     *
      * @return byte[] バイト列表現が配列で戻ります
      */
     byte[] getBytes();

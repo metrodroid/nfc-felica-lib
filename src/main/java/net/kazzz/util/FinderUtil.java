@@ -23,18 +23,18 @@ import java.util.Map.Entry;
 
 /**
  * いろいろなオブジェクトを探すユーティリティクラスです
- * 
+ *
  * @author Kazzz
  * @date 2011/02/20
  * @since Android API Level 4
- *
  */
 
 public final class FinderUtil {
-    
+
     /**
      * 配列中から条件に合う要素を抽出します
-     * @param <T> 任意の型を指定します
+     *
+     * @param <T>   任意の型を指定します
      * @param array <T>型の配列をセット
      * @param match 述語論理インタフェースをセットします
      * @return T 見つかった要素が戻ります
@@ -43,16 +43,18 @@ public final class FinderUtil {
         T result = null;
         for (int i = 0; i < array.length; i++) {
             T t = array[i];
-            if ( match.evaluate(t) ){
+            if (match.evaluate(t)) {
                 result = t;
                 break;
             }
         }
         return result;
     }
+
     /**
      * 配列中から条件に合う要素を抽出して配列を取得します
-     * @param <T> 任意の型を指定します
+     *
+     * @param <T>   任意の型を指定します
      * @param array <T>型の配列をセット
      * @param match 述語論理インタフェースをセットします
      * @return T[] 型の配列が戻ります
@@ -60,114 +62,123 @@ public final class FinderUtil {
     public static final <T> T[] findAll(T[] array, IPredicate<T> match) {
         ArrayList<T> temp = new ArrayList<T>();
         int size = array.length;
-        for (int i = 0; i < size; i++ ) {
+        for (int i = 0; i < size; i++) {
             T t = array[i];
-            if ( match.evaluate(t) ){
+            if (match.evaluate(t)) {
                 temp.add(t);
             }
         }
-        
-        T[] result = ArrayUtil.copyOf(array, 0); 
+
+        T[] result = ArrayUtil.copyOf(array, 0);
         return temp.toArray(result);
 
         //T[] result = (T[])
         //    Array.newInstance(array.getClass().getComponentType(), temp.size());
         //return temp.toArray(result);
     }
+
     /**
      * コレクションから条件に合う要素だけを抽出します
-     * @param <T> 任意の型を指定します
-     * @param array <T>型の配列をセット
+     *
+     * @param <T>   任意の型を指定します
+     * @param list <T>型の配列をセット
      * @param match 述語論理インタフェースをセットします
      * @return T 見つかった要素が戻ります
      */
     public static final <T> T find(Collection<T> list, IPredicate<T> match) {
         T result = null;
         Iterator<T> i = list.iterator();
-        while( i.hasNext() ) {
+        while (i.hasNext()) {
             T t = i.next();
-            if ( match.evaluate(t) ){
+            if (match.evaluate(t)) {
                 result = t;
                 break;
             }
         }
         return result;
     }
+
     /**
      * コレクションから条件に合う要素を抽出てコレクションを取得します
-     * @param <T> 任意の型を指定します
-     * @param array <T>型の配列をセット
+     *
+     * @param <T>   任意の型を指定します
+     * @param list  <T>型の配列をセット
      * @param match 述語論理インタフェースをセットします
      * @return Collection<T> 型のコレクションが戻ります
      */
     public static final <T> Collection<T> findAll(Collection<T> list
-    		, IPredicate<T> match) {
+            , IPredicate<T> match) {
         ArrayList<T> temp = new ArrayList<T>();
         Iterator<T> i = list.iterator();
-        while( i.hasNext() ) {
+        while (i.hasNext()) {
             T t = i.next();
-            if ( match.evaluate(t) ){
+            if (match.evaluate(t)) {
                 temp.add(t);
                 break;
             }
         }
         return temp;
     }
+
     /**
      * リストから条件に合う要素だけを抽出します
-     * @param <T> 任意の型を指定します
-     * @param array <T>型の配列をセット
+     *
+     * @param <T>   任意の型を指定します
+     * @param list  <T>型の配列をセット
      * @param match 述語論理インタフェースをセットします
      * @return T 見つかった要素が戻ります
      */
     public static final <T> T find(List<T> list, IPredicate<T> match) {
         T result = null;
         int size = list.size();
-        for (int i = 0; i < size; i++ ) {
+        for (int i = 0; i < size; i++) {
             T t = list.get(i);
-            if ( match.evaluate(t) ){
+            if (match.evaluate(t)) {
                 result = t;
                 break;
             }
         }
         return result;
     }
+
     /**
      * リストから条件に合う要素を抽出してリストで取得します
-     * @param <T> 任意の型を指定します
-     * @param array <T>型の配列をセット
+     *
+     * @param <T>   任意の型を指定します
+     * @param list  <T>型の配列をセット
      * @param match 述語論理インタフェースをセットします
      * @return List<T> 型のリスト(ArrayListにキャストできます)が戻ります
      */
     public static final <T> List<T> findAll(List<T> list, IPredicate<T> match) {
         ArrayList<T> temp = new ArrayList<T>();
         int size = list.size();
-        for (int i = 0; i < size; i++ ) {
+        for (int i = 0; i < size; i++) {
             T t = list.get(i);
-            if ( match.evaluate(t) ){
+            if (match.evaluate(t)) {
                 temp.add(t);
                 break;
             }
         }
         return temp;
     }
-    
+
     /**
      * 辞書中からプレフィクスが含まれるエントリだけを列挙します
-     * @param <TValue> マップ値の型パラメタ
+     *
+     * @param <TValue>   マップ値の型パラメタ
      * @param dictionary 対象の辞書(マップ)
-     * @param prefix プレフィクス文字列をセット
+     * @param prefix     プレフィクス文字列をセット
      * @return Iterator<Entry<String, TValue>> エントリのイテレータが戻ります
      */
     public static <TValue> Iterator<Entry<String, TValue>> findKeysWithPrefix(
             Map<String, TValue> dictionary, String prefix) {
-    
+
         HashMap<String, TValue> map = new HashMap<String, TValue>();
-        
-        if ( dictionary.containsKey(prefix) ) {
-            map.put(prefix, dictionary.get(prefix));   
+
+        if (dictionary.containsKey(prefix)) {
+            map.put(prefix, dictionary.get(prefix));
         }
-        
+
         Iterator<Entry<String, TValue>> i = dictionary.entrySet().iterator();
         while (i.hasNext()) {
             Entry<String, TValue> entry = i.next();
@@ -189,11 +200,13 @@ public final class FinderUtil {
         }
         return map.entrySet().iterator();
     }
+
     /**
      * プレフィクスに対して少なくとも一つのエントリが含まれているかどうかを検査します
-     * @param <TValue> 値の型パラメタ
+     *
+     * @param <TValue>   値の型パラメタ
      * @param dictionary 対象の辞書
-     * @param prefix プレフィクスをセット
+     * @param prefix     プレフィクスをセット
      * @return boolean 含まれている場合はtrueが戻ります
      */
     public static <TValue> boolean doesAnyKeyHavePrefix(Map<String, TValue> dictionary

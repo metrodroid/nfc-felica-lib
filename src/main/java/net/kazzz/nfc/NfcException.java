@@ -13,24 +13,27 @@ package net.kazzz.nfc;
 
 /**
  * Nfc 例外クラスを提供します
- * 
+ *
  * @author Kazzz
  * @date 2011/01/21
  * @since Android API Level 9
- *
  */
 
 public class NfcException extends Exception {
     private static final long serialVersionUID = 1L;
+
     /**
      * コンストラクタ
+     *
      * @param message メッセージをセット
      */
     public NfcException(String message) {
         super(message);
     }
+
     /**
      * コンストラクタ
+     *
      * @param cause 元の例外をセット
      */
     public NfcException(Exception cause) {

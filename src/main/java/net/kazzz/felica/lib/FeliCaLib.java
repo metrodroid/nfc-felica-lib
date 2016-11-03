@@ -29,69 +29,55 @@ import java.util.Arrays;
 
 /**
  * FeliCa、FeliCa Liteデバイスにアクセスするためのコマンドとデータ操作をライブラリィとして提供します
- * 
+ * <p>
  * <pre>
  * ※ 「FeliCa」は、ソニー株式会社が開発した非接触ICカードの技術方式です。
  * ※ 「FeliCa」、「FeliCa Lite」、「FeliCa Plug」、「FeliCaポケット」、「FeliCaランチャー」は、ソニー株式会社の登録商標です。
  * ※ 「Suica」は東日本旅客鉄道株式会社の登録商標です。
  * ※ 「PASMO」は、株式会社パスモの登録商標です。
- * 
+ *
  * 本ライブラリィはFeliCa、ソニー株式会社とはなんの関係もありません。
  * </pre>
- * 
+ *
  * @author Kazzz
  * @date 2011/03/04
  * @since Android API Level 10
- *
  */
 
 public final class FeliCaLib {
-    static final String TAG = "FeliCaLib";
-
     //polling
     public static final byte COMMAND_POLLING = 0x00;
     public static final byte RESPONSE_POLLING = 0x01;
-
     //request service
     public static final byte COMMAND_REQUEST_SERVICE = 0x02;
     public static final byte RESPONSE_REQUEST_SERVICE = 0x03;
-
     //request RESPONSE
     public static final byte COMMAND_REQUEST_RESPONSE = 0x04;
     public static final byte RESPONSE_REQUEST_RESPONSE = 0x05;
-
     //read without encryption
     public static final byte COMMAND_READ_WO_ENCRYPTION = 0x06;
     public static final byte RESPONSE_READ_WO_ENCRYPTION = 0x07;
-
     //write without encryption
     public static final byte COMMAND_WRITE_WO_ENCRYPTION = 0x08;
     public static final byte RESPONSE_WRITE_WO_ENCRYPTION = 0x09;
-
     //search service code
     public static final byte COMMAND_SEARCH_SERVICECODE = 0x0a;
     public static final byte RESPONSE_SEARCH_SERVICECODE = 0x0b;
-
     //request system code
     public static final byte COMMAND_REQUEST_SYSTEMCODE = 0x0c;
     public static final byte RESPONSE_REQUEST_SYSTEMCODE = 0x0d;
-
     //authentication 1
     public static final byte COMMAND_AUTHENTICATION1 = 0x10;
     public static final byte RESPONSE_AUTHENTICATION1 = 0x11;
-
     //authentication 2
     public static final byte COMMAND_AUTHENTICATION2 = 0x12;
     public static final byte RESPONSE_AUTHENTICATION2 = 0x13;
-
     //read
     public static final byte COMMAND_READ = 0x14;
     public static final byte RESPONSE_READ = 0x15;
-
     //write
     public static final byte COMMAND_WRITE = 0x16;
     public static final byte RESPONSE_WRITE = 0x17;
-
     // システムコード
     public static final int SYSTEMCODE_ANY = 0xffff;         // ANY
     public static final int SYSTEMCODE_FELICA_LITE = 0x88b4; // FeliCa Lite
@@ -101,26 +87,21 @@ public final class FeliCaLib {
     public static final int SYSTEMCODE_OCTOPUS = 0x0880;     // Octopus (Hong Kong)
     public static final int SYSTEMCODE_SUICA = 0x0003;       // Suica (=サイバネ領域)
     public static final int SYSTEMCODE_PASMO = 0x0003;       // Pasmo (=サイバネ領域)
-
     // サービスコード suica/pasmo (little endian)
     public static final int SERVICE_SUICA_INOUT = 0x108f;           // SUICA/PASMO 入退場記録
     public static final int SERVICE_SUICA_HISTORY = 0x090f;         // SUICA/PASMO履歴
-    public static final int SERVICE_FELICA_LITE_READONLY = 0x0b00;  // FeliCa Lite RO権限 
+    public static final int SERVICE_FELICA_LITE_READONLY = 0x0b00;  // FeliCa Lite RO権限
     public static final int SERVICE_FELICA_LITE_READWRITE = 0x0900; // FeliCa Lite RW権限
     public static final int SERVICE_OCTOPUS = 0x0117;
-
-
     //アクセス属性 (サービスコードの下6ビット
     public static final int RANDOM_RW_AUTH = 0x08;   // ランダムサービス(リード/ライト:認証必要) 001000b
     public static final int RANDOM_RW_WOAUTH = 0x09; // ランダムサービス(リード/ライト:認証不要) 001001b
     public static final int RANDOM_RO_AUTH = 0x0a;   // ランダムサービス(リードオンリー:認証必要) 001010b
     public static final int RANDOM_RO_WOAUTH = 0x0b; // ランダムサービス(リードオンリー:認証不要) 001011b
-
     public static final int CYCLIC_RW_AUTH = 0x0c;   // サイクリックサービス(リード/ライト:認証必要) 001100b
     public static final int CYCLIC_RW_WOAUTH = 0x0d; // サイクリックサービス(リード/ライト:認証不要) 001101b
     public static final int CYCLIC_RO_AUTH = 0x0e;   // サイクリックサービス(リードオンリー:認証必要) 000111b
     public static final int CYCLIC_RO_WOAUTH = 0x0f; // サイクリックサービス(リードオンリー:認証不要) 001111b
-
     public static final int PARSE_DR_AUTH = 0x10;      // パースサービス(ダイレクト:認証必要) 010000b
     public static final int PARSE_DR_WOAUTH = 0x11;    // パースサービス(ダイレクト:認証不要) 010001b
     public static final int PARSE_CB_DEC_AUTH = 0x12;  // パースサービス(キャッシュバック/デクリメント:認証必要) 010010b
@@ -129,18 +110,15 @@ public final class FeliCaLib {
     public static final int PARSE_DEC_WOAUTH = 0x15;   // パースサービス(デクリメント:認証不要) 010101b
     public static final int PARSE_RO_AUTH = 0x16;      // パースサービス(リードオンリー:認証必要) 010100b
     public static final int PARSE_RO_WOAUTH = 0x17;    // パースサービス(リードオンリー:認証不要) 010101b
-
-
-    public static final int STATUSFLAG1_NORMAL = 0x00; //正常終了 
+    public static final int STATUSFLAG1_NORMAL = 0x00; //正常終了
     public static final int STATUSFLAG1_ERROR = 0xff;  //エラー　(ブロック番号に依らない)
-
     public static final int STATUSFLAG2_NORMAL = 0x00;          //正常終了
     public static final int STATUSFLAG2_ERROR_LENGTH = 0x01;
     public static final int STATUSFLAG2_ERROR_FLOWN = 0x02;
     public static final int STATUSFLAG2_ERROR_MEMORY = 0x70;
     public static final int STATUSFLAG2_ERROR_WRITELIMIT = 0x71;
-
     public static final SparseArray<String> commandMap = new SparseArray<>();
+    static final String TAG = "FeliCaLib";
 
     //command code and name dictionary
     static {
@@ -169,6 +147,61 @@ public final class FeliCaLib {
     }
 
     /**
+     * コマンドを実行します
+     *
+     * @param tag           Tagクラスの参照をセットします
+     * @param commandPacket 実行するコマンドパケットをセットします
+     * @return CommandResponse コマンドの実行結果が戻ります
+     * @throws FeliCaException コマンドの発行に失敗した場合にスローされます
+     */
+    public static final CommandResponse execute(Tag tag, CommandPacket commandPacket) throws FeliCaException {
+        byte[] result = executeRaw(tag, commandPacket.getBytes());
+        return new CommandResponse(result);
+    }
+
+    /**
+     * Rawデータを使ってコマンドを実行します
+     *
+     * @param tag  Tagクラスの参照をセットします
+     * @param data コマンドにセットするデータをセットします
+     * @return byte[] コマンドの実行結果バイト列で戻ります
+     * @throws FeliCaException コマンドの発行に失敗した場合にスローされます
+     */
+    public static final byte[] executeRaw(Tag tag, byte[] data) throws FeliCaException {
+        try {
+            return transceive(tag, data);
+        } catch (NfcException e) {
+            throw new FeliCaException(e);
+        }
+    }
+
+    /**
+     * INfcTag#transceiveを実行します
+     *
+     * @param tag  Tagクラスの参照をセットします
+     * @param data 実行するコマンドパケットをセットします
+     * @return byte[] コマンドの実行結果バイト列で戻ります
+     * @throws FeliCaException コマンドの発行に失敗した場合にスローされます
+     */
+    public static final byte[] transceive(Tag tag, byte[] data) throws NfcException {
+        //NfcFはFeliCa
+        NfcF nfcF = NfcF.get(tag);
+        if (nfcF == null) throw new NfcException("tag is not FeliCa(NFC-F) ");
+        try {
+            nfcF.connect();
+            try {
+                return nfcF.transceive(data);
+            } finally {
+                nfcF.close();
+            }
+        } catch (TagLostException e) {
+            return null; //Tag Lost
+        } catch (IOException e) {
+            throw new NfcException(e);
+        }
+    }
+
+    /**
      * FeliCa コマンドパケットクラスを提供します
      *
      * @author Kazzz
@@ -176,7 +209,7 @@ public final class FeliCaLib {
      * @since Android API Level 9
      */
     public static class CommandPacket implements IFeliCaCommand {
-        protected final int length;     //コマンド全体のデータ長 
+        protected final int length;     //コマンド全体のデータ長
         protected final byte commandCode;//コマンドコード
         protected final IDm idm;        //FeliCa IDm
         protected final byte[] data;     //コマンドデータ
@@ -822,7 +855,6 @@ public final class FeliCaLib {
         }
     }
 
-
     /**
      * FeliCa FileSystemにおけるBlock(ブロック)を抽象化したクラス提供します
      *
@@ -878,8 +910,8 @@ public final class FeliCaLib {
         public static final byte LENGTH_3_BYTE = (byte) 0x00;
         public static final byte ACCESSMODE_DECREMENT = 0x00;
         public static final byte ACCESSMODE_CACHEBACK = 0x01;
-        final byte lengthAndaccessMode; // 
-        final byte serviceCodeListOrder; // 
+        final byte lengthAndaccessMode; //
+        final byte serviceCodeListOrder; //
         final byte[] blockNumber;
 
         /**
@@ -1009,61 +1041,6 @@ public final class FeliCaLib {
             return sb.toString();
         }
 
-    }
-
-    /**
-     * コマンドを実行します
-     *
-     * @param tag           Tagクラスの参照をセットします
-     * @param commandPacket 実行するコマンドパケットをセットします
-     * @return CommandResponse コマンドの実行結果が戻ります
-     * @throws FeliCaException コマンドの発行に失敗した場合にスローされます
-     */
-    public static final CommandResponse execute(Tag tag, CommandPacket commandPacket) throws FeliCaException {
-        byte[] result = executeRaw(tag, commandPacket.getBytes());
-        return new CommandResponse(result);
-    }
-
-    /**
-     * Rawデータを使ってコマンドを実行します
-     *
-     * @param tag  Tagクラスの参照をセットします
-     * @param data コマンドにセットするデータをセットします
-     * @return byte[] コマンドの実行結果バイト列で戻ります
-     * @throws FeliCaException コマンドの発行に失敗した場合にスローされます
-     */
-    public static final byte[] executeRaw(Tag tag, byte[] data) throws FeliCaException {
-        try {
-            return transceive(tag, data);
-        } catch (NfcException e) {
-            throw new FeliCaException(e);
-        }
-    }
-
-    /**
-     * INfcTag#transceiveを実行します
-     *
-     * @param tag  Tagクラスの参照をセットします
-     * @param data 実行するコマンドパケットをセットします
-     * @return byte[] コマンドの実行結果バイト列で戻ります
-     * @throws FeliCaException コマンドの発行に失敗した場合にスローされます
-     */
-    public static final byte[] transceive(Tag tag, byte[] data) throws NfcException {
-        //NfcFはFeliCa
-        NfcF nfcF = NfcF.get(tag);
-        if (nfcF == null) throw new NfcException("tag is not FeliCa(NFC-F) ");
-        try {
-            nfcF.connect();
-            try {
-                return nfcF.transceive(data);
-            } finally {
-                nfcF.close();
-            }
-        } catch (TagLostException e) {
-            return null; //Tag Lost
-        } catch (IOException e) {
-            throw new NfcException(e);
-        }
     }
 
 }

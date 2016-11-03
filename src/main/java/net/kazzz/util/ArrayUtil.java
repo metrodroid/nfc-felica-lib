@@ -17,20 +17,19 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 配列で使用するための各種ユーティリティ 
+ * 配列で使用するための各種ユーティリティ
  *
  * @author Kazzz
  * @date 2011/02/20
  * @since Android API Level 4
- *
  */
 public final class ArrayUtil {
     /**
      * 配列にオブジェクトを追加します。
+     *
      * @param <T>
-     * 
      * @param array 対象の配列をセット
-     * @param obj 対象のオブジェクトをセット
+     * @param obj   対象のオブジェクトをセット
      * @return オブジェクトが追加された結果の配列
      */
     @SuppressWarnings("unchecked")
@@ -47,10 +46,10 @@ public final class ArrayUtil {
 
     /**
      * 配列に配列を追加します。(合成)
+     *
      * @param <T>
-     * 
-     * @param a 配列Aをセット
-     * @param b 配列Bをセット
+     * @param a   配列Aをセット
+     * @param b   配列Bをセット
      * @return 配列が追加された結果の配列
      */
     @SuppressWarnings("unchecked")
@@ -76,9 +75,9 @@ public final class ArrayUtil {
 
     /**
      * 配列中のオブジェクトのindexを返します。
-     * 
+     *
      * @param array 配列をセット
-     * @param obj 対象のオブジェクトをセット
+     * @param obj   対象のオブジェクトをセット
      * @return 配列中のオブジェクトのindex
      */
     public static final <T> int indexOf(T[] array, T obj) {
@@ -97,11 +96,12 @@ public final class ArrayUtil {
         }
         return -1;
     }
+
     /**
      * 文字列配列中のオブジェクトのindexを返します。
-     * 
+     *
      * @param array 文字列配列をセット
-     * @param str 対象の文字列オブジェクトをセット
+     * @param str   対象の文字列オブジェクトをセット
      * @return 配列中のオブジェクトのindexが戻ります
      */
     public static final int indexOfIgnoreCase(String[] array, String str) {
@@ -123,9 +123,9 @@ public final class ArrayUtil {
 
     /**
      * 配列中のcharのindexを返します。
-     * 
+     *
      * @param array 対象の文字配列をセット
-     * @param ch 対象文字をセット
+     * @param ch    対象文字をセット
      * @return 配列中のcharのindex
      */
     public static final int indexOf(char[] array, char ch) {
@@ -142,9 +142,9 @@ public final class ArrayUtil {
 
     /**
      * 配列中から対象のオブジェクトを削除します。
-     * 
+     *
      * @param array 対象の配列をセット
-     * @param obj 対象のオブジェクトをセット
+     * @param obj   対象のオブジェクトをセット
      * @return 削除後の配列が戻ります
      */
     @SuppressWarnings("unchecked")
@@ -167,7 +167,7 @@ public final class ArrayUtil {
 
     /**
      * 配列が空かどうかを検査します
-     *   
+     *
      * @param arrays 対象の配列をセット
      * @return 配列が空であれは゛trueが戻ります
      */
@@ -177,10 +177,9 @@ public final class ArrayUtil {
 
     /**
      * 配列にオブジェクトが含まれているかどうかを返します。
-     * 
+     *
      * @param array 対象の配列をセット
-     * @param obj 対象のオブジェクトをセットします
-     * @return 
+     * @param obj   対象のオブジェクトをセットします
      * @return 配列にオブジェクトが含まれている場合はtrueが戻ります
      */
     public static final <T> boolean contains(T[] array, T obj) {
@@ -189,19 +188,20 @@ public final class ArrayUtil {
 
     /**
      * 文字列配列に文字列オブジェクトが含まれているかどうかを返します。(文字列のケースを比較しません)
-     * 
+     *
      * @param array 対象の配列をセット
-     * @param obj 対象のオブジェクトをセットします
+     * @param str   対象のオブジェクトをセットします
      * @return 配列にオブジェクトが含まれている場合はtrueが戻ります
      */
     public static final boolean containsIgnoreCase(String[] array, String str) {
         return -1 < indexOfIgnoreCase(array, str);
     }
+
     /**
      * 配列にcharが含まれているかどうかを返します。
-     * 
+     *
      * @param array 対象の配列をセット
-     * @param ch 対象の文字をセット
+     * @param ch    対象の文字をセット
      * @return 配列にcharが含まれている場合trueが戻ります
      */
     public static final boolean contains(char[] array, char ch) {
@@ -210,7 +210,7 @@ public final class ArrayUtil {
 
     /**
      * 順番は無視して2つの配列が等しいかどうかを返します。
-     * 
+     *
      * @param array1 一つ目の配列をセット
      * @param array2 二つ目の配列をセット
      * @return 順番は無視して2つの配列が等しい場合trueが戻ります
@@ -236,7 +236,7 @@ public final class ArrayUtil {
 
     /**
      * 配列を文字列に変換します。
-     * 
+     *
      * @param array 配列をセット
      * @return 配列の文字列表現が戻ります
      */
@@ -262,7 +262,7 @@ public final class ArrayUtil {
 
     /**
      * ある型の配列をオブジェクトの配列に変換します。
-     * 
+     *
      * @param obj 対象のオブジェクトをセット
      * @return オブジェクトの配列が戻ります
      */
@@ -274,44 +274,52 @@ public final class ArrayUtil {
         }
         return array;
     }
+
     /**
      * 文字列配列の空の要素をトリミングします
+     *
      * @param array 配列をセット
      * @return String[] トリム後の配列が戻ります
      */
     public static final String[] trim(final String[] array) {
-        String[] includes = FinderUtil.findAll(array, 
-                new IPredicate<String>(){
+        String[] includes = FinderUtil.findAll(array,
+                new IPredicate<String>() {
                     @Override
                     public boolean evaluate(String input) {
                         return (input != null && input.length() > 0);
-                    }});
+                    }
+                });
         return includes;
     }
+
     /**
      * 文字列配列の要素から重複を削除します
+     *
      * @param array 配列をセット
      * @return T[] トリム後の配列が戻ります
      */
     public static final <T> T[] truncate(final T[] array) {
         final ArrayList<T> list = new ArrayList<T>(array.length);
-        T[] includes = FinderUtil.findAll(array, 
-                new IPredicate<T>(){
+        T[] includes = FinderUtil.findAll(array,
+                new IPredicate<T>() {
                     @Override
                     public boolean evaluate(T input) {
-                        if ( list.contains(input) ) {
+                        if (list.contains(input)) {
                             return false;
                         } else {
                             list.add(input);
                             return true;
                         }
-                    }});
+                    }
+                });
         return includes;
     }
+
     /**
      * 配列の要素数を変えてコピーします
-     * @param <T> 配列要素の型パラメタ
-     * @param original 元の配列
+     *
+     * @param <T>       配列要素の型パラメタ
+     * @param original  元の配列
      * @param newLength 新しい配列のサイズ
      * @return T[] 新たな要素数の配列が戻ります
      */
@@ -322,21 +330,22 @@ public final class ArrayUtil {
 
     /**
      * 配列を別な要素型の配列にコピーします
-     * @param <T> 先の要素型パラメタ
-     * @param <U> 元の要素型パラメタ
-     * @param original 元の配列
+     *
+     * @param <T>       先の要素型パラメタ
+     * @param <U>       元の要素型パラメタ
+     * @param original  元の配列
      * @param newLength 新たな配列の要素数
-     * @param newType　新たな配列の型
+     * @param newType   　新たな配列の型
      * @return T[] コピーされた新たな配列が戻ります
      */
     @SuppressWarnings("unchecked")
-    public static final <T,U> T[] copyOf(U[] original, int newLength
+    public static final <T, U> T[] copyOf(U[] original, int newLength
             , Class<? extends T[]> newType) {
-        T[] copy = ((Object)newType == (Object)Object[].class)
-            ? (T[]) new Object[newLength]
-            : (T[]) Array.newInstance(newType.getComponentType(), newLength);
+        T[] copy = ((Object) newType == (Object) Object[].class)
+                ? (T[]) new Object[newLength]
+                : (T[]) Array.newInstance(newType.getComponentType(), newLength);
         System.arraycopy(original, 0, copy, 0,
-                         Math.min(original.length, newLength));
+                Math.min(original.length, newLength));
         return copy;
     }
 

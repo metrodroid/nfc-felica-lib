@@ -12,34 +12,34 @@
 
 package net.kazzz.nfc;
 
-import net.kazzz.felica.lib.Util;
 import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import net.kazzz.felica.lib.Util;
+
 /**
  * NFC規格で使用するタグを抽象化したクラス提供します
- * 
+ *
  * @author Kazzz, k_morishita
  * @date 2011/02/19
  * @since Android API Level 9
- *
  */
 public class NfcTag implements Parcelable {
     //private static String TAG = "NfcTag";
     public static final String ANDROID_NFC_EXTRA_TAG = "android.nfc.extra.TAG";
-    
-    public static final Parcelable.Creator<NfcTag> CREATOR = 
-        new Parcelable.Creator<NfcTag>() {
-            public NfcTag createFromParcel(Parcel in) {
-                return new NfcTag(in);
-            }
-            
-            public NfcTag[] newArray(int size) {
-                return new NfcTag[size];
-            }
-        };
-    
+
+    public static final Parcelable.Creator<NfcTag> CREATOR =
+            new Parcelable.Creator<NfcTag>() {
+                public NfcTag createFromParcel(Parcel in) {
+                    return new NfcTag(in);
+                }
+
+                public NfcTag[] newArray(int size) {
+                    return new NfcTag[size];
+                }
+            };
+
     protected byte[] idbytes;
     protected Parcelable nfcTag;
 
@@ -48,33 +48,38 @@ public class NfcTag implements Parcelable {
      */
     public NfcTag() {
     }
-    
+
     /**
      * コンストラクタ
-     * @param in 
+     *
+     * @param in
      */
     public NfcTag(Parcel in) {
         this();
         this.readFromParcel(in);
     }
+
     /**
      * コンストラクタ
-     * 
+     *
      * @param nfcTag NfcTagをセット
-     * @param id タグを識別するバイト列をセット
+     * @param id     タグを識別するバイト列をセット
      */
     public NfcTag(Parcelable nfcTag, byte[] id) {
         this();
         this.nfcTag = nfcTag;
         this.idbytes = id;
     }
+
     /**
      * Nfcタグを取得します
+     *
      * @return Parcelable 内部に格納したNfcTagが戻ります
      */
     public Parcelable getNfcTag() {
         return nfcTag;
     }
+
     /* (non-Javadoc)
      * @see android.os.Parcelable#describeContents()
      */
@@ -82,6 +87,7 @@ public class NfcTag implements Parcelable {
     public int describeContents() {
         return 0;
     }
+
     /* (non-Javadoc)
      * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
      */
@@ -91,8 +97,10 @@ public class NfcTag implements Parcelable {
         dest.writeByteArray(this.idbytes);
         dest.writeParcelable(this.nfcTag, 0);
     }
+
     /**
-     * Parcel内からインスタンスを構成します 
+     * Parcel内からインスタンスを構成します
+     *
      * @param source パーセルオブジェクトをセット
      */
     public void readFromParcel(Parcel source) {
@@ -100,30 +108,35 @@ public class NfcTag implements Parcelable {
         source.readByteArray(this.idbytes);
         this.nfcTag = source.readParcelable(this.getClass().getClassLoader());
     }
+
     /**
      * インテントをタグ情報をセットします
+     *
      * @param intent インテントをセット
      */
     public void putTagService(Intent intent) {
         intent.putExtra(ANDROID_NFC_EXTRA_TAG, this.nfcTag);
     }
+
     /**
      * IDを取得します
+     *
      * @return byte[] IDが戻ります
      */
     public byte[] getId() {
         return idbytes;
     }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-       StringBuilder sb = new StringBuilder();
-       sb.append("NfcTag \n");
-       sb.append(" idbytes:" + Util.getHexString(this.idbytes)  +  "\n");
-       sb.append(" nfcTag: " + this.nfcTag.toString() + "\n");
-       return sb.toString();
+        StringBuilder sb = new StringBuilder();
+        sb.append("NfcTag \n");
+        sb.append(" idbytes:" + Util.getHexString(this.idbytes) + "\n");
+        sb.append(" nfcTag: " + this.nfcTag.toString() + "\n");
+        return sb.toString();
     }
-    
+
 }

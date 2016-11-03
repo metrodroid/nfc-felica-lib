@@ -17,16 +17,16 @@ import net.kazzz.felica.lib.FeliCaLib;
 
 /**
  * FeliCaコマンドを抽象化したインタフェースを提供します
- * 
+ *
  * @author Kazzz
  * @date 2011/01/21
  * @since Android API Level 9
- *
  */
 
 public interface IFeliCaCommand extends IFeliCaByteData {
     /**
      * PICC側を一意の識別するためのIDmを取得します
+     *
      * @return IDmが戻ります
      */
     FeliCaLib.IDm getIDm();

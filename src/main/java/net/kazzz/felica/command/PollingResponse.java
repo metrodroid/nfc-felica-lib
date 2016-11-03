@@ -11,33 +11,33 @@
  */
 package net.kazzz.felica.command;
 
-import java.util.Arrays;
-
 import net.kazzz.felica.lib.FeliCaLib;
 import net.kazzz.felica.lib.FeliCaLib.CommandResponse;
 import net.kazzz.felica.lib.FeliCaLib.PMm;
 import net.kazzz.felica.lib.Util;
 
+import java.util.Arrays;
+
 /**
  * Pollingコマンドのレスポンスを抽象化したクラスを提供します
- * 
+ *
  * @author Kazzz
  * @date 2011/01/22
  * @since Android API Level 9
- *
  */
 
 public class PollingResponse extends CommandResponse {
-    final PMm pmm; 
-    final byte[] requestData; 
+    final PMm pmm;
+    final byte[] requestData;
+
     /**
      * コンストラクタ
-     * 
-     * @param data コマンド実行結果で戻ったバイト列をセット
+     *
+     * @param response コマンド実行結果で戻ったバイト列をセット
      */
     public PollingResponse(CommandResponse response) {
         super(response);
-        if ( this.data != null && this.data.length >= 8 ) {
+        if (this.data != null && this.data.length >= 8) {
             this.pmm = new PMm(Arrays.copyOfRange(this.data, 0, 8));
             this.requestData = Arrays.copyOfRange(this.data, 8, data.length);
         } else {
@@ -45,14 +45,16 @@ public class PollingResponse extends CommandResponse {
             this.requestData = null;
         }
     }
+
     /**
      * PMmを取得します
-     * 
+     *
      * @return PMm pmmが戻ります
      */
     public PMm getPMm() {
         return this.pmm;
     }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -60,12 +62,12 @@ public class PollingResponse extends CommandResponse {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("FeliCa レスポンス　パケット \n");
-        sb.append(" コマンド名 : " + FeliCaLib.commandMap.get(this.responseCode)  +  "\n");
+        sb.append(" コマンド名 : " + FeliCaLib.commandMap.get(this.responseCode) + "\n");
         sb.append(" データ長 : " + this.length + "\n");
-        sb.append(" コマンドコード : " + Util.getHexString(this.responseCode) +  "\n");
-        if ( this.idm != null )
+        sb.append(" コマンドコード : " + Util.getHexString(this.responseCode) + "\n");
+        if (this.idm != null)
             sb.append(" " + this.idm.toString() + "\n");
-        if ( this.pmm != null )
+        if (this.pmm != null)
             sb.append(" " + this.pmm.toString() + "\n");
         sb.append(" データ: " + Util.getHexString(this.data) + "\n");
         return sb.toString();
