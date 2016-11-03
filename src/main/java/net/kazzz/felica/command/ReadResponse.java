@@ -38,6 +38,15 @@ public class ReadResponse extends CommandResponse {
      */
     public ReadResponse(CommandResponse response) {
         super(response);
+        if (this.data == null) {
+            // Tried to read a block which doesn't exist
+            this.blockCount = 0;
+            this.blockData = null;
+            this.statusFlag1 = 0xffff;
+            this.statusFlag2 = 0xffff;
+            return;
+        }
+
         this.statusFlag1 = this.data[0];
         this.statusFlag2 = this.data[1];
         if (this.getStatusFlag1() == 0) {
