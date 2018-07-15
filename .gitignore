@@ -15,6 +15,3 @@ project.properties
 .gradle
 *.keystore
 *.apk
-gradle/
-gradlew
-gradlew.bat
