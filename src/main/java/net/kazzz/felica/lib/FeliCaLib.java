@@ -19,7 +19,6 @@ import android.os.Parcelable;
 import android.util.SparseArray;
 
 import net.kazzz.felica.FeliCaException;
-import net.kazzz.nfc.NfcException;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -177,8 +176,8 @@ public final class FeliCaLib {
             // We want to specifically catch TagLostExecption, and wrap other NfcExecption
             // differently for now.
             throw e;
-        } catch (NfcException e) {
-            throw new FeliCaException(e);
+        } catch (FeliCaException e) {
+            throw e;
         }
     }
 
@@ -191,10 +190,10 @@ public final class FeliCaLib {
      * @throws TagLostException if the tag went out of the field
      * @throws FeliCaException コマンドの発行に失敗した場合にスローされます
      */
-    public static byte[] transceive(Tag tag, byte[] data) throws NfcException, TagLostException {
+    public static byte[] transceive(Tag tag, byte[] data) throws FeliCaException, TagLostException {
         //NfcFはFeliCa
         NfcF nfcF = NfcF.get(tag);
-        if (nfcF == null) throw new NfcException("tag is not FeliCa(NFC-F) ");
+        if (nfcF == null) throw new FeliCaException("tag is not FeliCa(NFC-F) ");
         try {
             nfcF.connect();
             try {
@@ -206,7 +205,7 @@ public final class FeliCaLib {
             // We want to specifically pass through TagLostException.
             throw e;
         } catch (IOException e) {
-            throw new NfcException(e);
+            throw new FeliCaException(e);
         }
     }
 

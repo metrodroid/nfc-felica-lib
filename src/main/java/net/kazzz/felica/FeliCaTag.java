@@ -27,8 +27,6 @@ import net.kazzz.felica.lib.FeliCaLib.IDm;
 import net.kazzz.felica.lib.FeliCaLib.PMm;
 import net.kazzz.felica.lib.FeliCaLib.ServiceCode;
 import net.kazzz.felica.lib.FeliCaLib.SystemCode;
-import net.kazzz.nfc.NfcException;
-import net.kazzz.nfc.NfcTag;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -101,7 +99,7 @@ public class FeliCaTag extends NfcTag {
 
 
     /* (non-Javadoc)
-     * @see net.kazzz.nfc.NfcTag#writeToParcel(android.os.Parcel, int)
+     * @see net.kazzz.felica.NfcTag#writeToParcel(android.os.Parcel, int)
      */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -111,7 +109,7 @@ public class FeliCaTag extends NfcTag {
     }
 
     /* (non-Javadoc)
-     * @see net.kazzz.nfc.NfcTag#readFromParcel(android.os.Parcel)
+     * @see net.kazzz.felica.NfcTag#readFromParcel(android.os.Parcel)
      */
     @Override
     public void readFromParcel(Parcel source) {
@@ -184,7 +182,7 @@ public class FeliCaTag extends NfcTag {
      * SystemCodeの一覧を取得します。
      *
      * @return SystemCode[] 検出された SystemCodeの一覧を返します。
-     * @throws NfcException
+     * @throws FeliCaException
      * @throws TagLostException if the tag went out of the field
      */
     public final SystemCode[] getSystemCodeList() throws FeliCaException, TagLostException {
@@ -211,7 +209,7 @@ public class FeliCaTag extends NfcTag {
      *
      * @return ServiceCode[] 検出された ServiceCodeの配列
      * @throws TagLostException if the tag went out of the field
-     * @throws NfcException
+     * @throws FeliCaException
      */
     public ServiceCode[] getServiceCodeList() throws FeliCaException, TagLostException {
         int index = 1; // 0番目は root areaなので1オリジンで開始する

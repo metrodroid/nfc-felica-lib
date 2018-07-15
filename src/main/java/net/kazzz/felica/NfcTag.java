@@ -10,7 +10,7 @@
  * limitations under the License.
  */
 
-package net.kazzz.nfc;
+package net.kazzz.felica;
 
 import android.content.Intent;
 import android.os.Parcel;

@@ -25,7 +25,6 @@ import net.kazzz.felica.lib.FeliCaLib.CommandResponse;
 import net.kazzz.felica.lib.FeliCaLib.IDm;
 import net.kazzz.felica.lib.FeliCaLib.MemoryConfigurationBlock;
 import net.kazzz.felica.lib.FeliCaLib.PMm;
-import net.kazzz.nfc.NfcTag;
 
 import java.nio.ByteBuffer;
 
@@ -96,7 +95,7 @@ public class FeliCaLiteTag extends NfcTag {
 
 
     /* (non-Javadoc)
-     * @see net.kazzz.nfc.NfcTag#writeToParcel(android.os.Parcel, int)
+     * @see net.kazzz.felica.NfcTag#writeToParcel(android.os.Parcel, int)
      */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -106,7 +105,7 @@ public class FeliCaLiteTag extends NfcTag {
     }
 
     /* (non-Javadoc)
-     * @see net.kazzz.nfc.NfcTag#readFromParcel(android.os.Parcel)
+     * @see net.kazzz.felica.NfcTag#readFromParcel(android.os.Parcel)
      */
     @Override
     public void readFromParcel(Parcel source) {
