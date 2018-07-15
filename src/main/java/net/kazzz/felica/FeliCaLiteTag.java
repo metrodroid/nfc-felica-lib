@@ -12,6 +12,7 @@
 package net.kazzz.felica;
 
 import android.nfc.Tag;
+import android.nfc.TagLostException;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -119,9 +120,10 @@ public class FeliCaLiteTag extends NfcTag {
      * カードデータをポーリングします
      *
      * @throws FeliCaException
-     * @return　byte[] システムコードの配列が戻ります
+     * @throws TagLostException if the tag went out of the field
+     * @return byte[] システムコードの配列が戻ります
      */
-    public byte[] polling() throws FeliCaException {
+    public byte[] polling() throws FeliCaException, TagLostException {
         if (this.nfcTag == null) {
             throw new FeliCaException("tagService is null. no polling execution");
         }
@@ -142,9 +144,10 @@ public class FeliCaLiteTag extends NfcTag {
      * カードデータをポーリングしてIDmを取得します
      *
      * @throws FeliCaException
-     * @return　IDm IDmが戻ります
+     * @throws TagLostException if the tag went out of the field
+     * @return IDm IDmが戻ります
      */
-    public IDm pollingAndGetIDm() throws FeliCaException {
+    public IDm pollingAndGetIDm() throws FeliCaException, TagLostException {
         this.polling();
         return this.idm;
     }
@@ -173,9 +176,10 @@ public class FeliCaLiteTag extends NfcTag {
      * メモリコンフィグィグレーションブロック(ブロック番号:0x88h)を取得します
      *
      * @return MemoryConfigurationBlock 取得したメモリコンフィグィグレーションブロックが戻ります
+     * @throws TagLostException if the tag went out of the field
      * @throws FeliCaException
      */
-    public MemoryConfigurationBlock getMemoryConfigBlock() throws FeliCaException {
+    public MemoryConfigurationBlock getMemoryConfigBlock() throws FeliCaException, TagLostException {
         ReadResponse r = this.readWithoutEncryption((byte) 0x88); //ブロック88hはMC領域
         return (r != null)
                 ? new MemoryConfigurationBlock(r.getBlockData()) : null;
@@ -188,7 +192,7 @@ public class FeliCaLiteTag extends NfcTag {
      * @return ReadResponse デバイスからの読み込んだレスポンスが戻ります
      * @throws FeliCaException
      */
-    public ReadResponse readWithoutEncryption(byte addr) throws FeliCaException {
+    public ReadResponse readWithoutEncryption(byte addr) throws FeliCaException, TagLostException {
         if (this.nfcTag == null) {
             throw new FeliCaException("tagService is null. no read execution");
         }
@@ -209,10 +213,11 @@ public class FeliCaLiteTag extends NfcTag {
      *
      * @param addr データをセットするブロックのアドレス(0オリジン)をセット
      * @param buff 書きこむデータをセット (16バイト)
+     * @throws TagLostException if the tag went out of the field
      * @return WriteResponse 書き込んだ結果のレスポンスオブジェクトが戻ります (書き込みに失敗した場合-1が戻ります)
      * @throws FeliCaException
      */
-    public WriteResponse writeWithoutEncryption(byte addr, byte[] buff) throws FeliCaException {
+    public WriteResponse writeWithoutEncryption(byte addr, byte[] buff) throws FeliCaException, TagLostException {
         if (this.nfcTag == null) {
             throw new FeliCaException("tagService is null. no write execution");
         }

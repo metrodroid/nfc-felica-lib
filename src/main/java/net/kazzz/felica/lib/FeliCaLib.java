@@ -155,8 +155,10 @@ public final class FeliCaLib {
      * @param commandPacket 実行するコマンドパケットをセットします
      * @return CommandResponse コマンドの実行結果が戻ります
      * @throws FeliCaException コマンドの発行に失敗した場合にスローされます
+     * @throws TagLostException if the tag went out of the field
      */
-    public static final CommandResponse execute(Tag tag, CommandPacket commandPacket) throws FeliCaException {
+    public static final CommandResponse execute(Tag tag, CommandPacket commandPacket)
+            throws FeliCaException, TagLostException {
         byte[] result = executeRaw(tag, commandPacket.getBytes());
         return new CommandResponse(result);
     }
@@ -168,10 +170,15 @@ public final class FeliCaLib {
      * @param data コマンドにセットするデータをセットします
      * @return byte[] コマンドの実行結果バイト列で戻ります
      * @throws FeliCaException コマンドの発行に失敗した場合にスローされます
+     * @throws TagLostException if the tag went out of the field
      */
-    public static final byte[] executeRaw(Tag tag, byte[] data) throws FeliCaException {
+    public static byte[] executeRaw(Tag tag, byte[] data) throws FeliCaException, TagLostException {
         try {
             return transceive(tag, data);
+        } catch (@SuppressWarnings("CaughtExceptionImmediatelyRethrown") TagLostException e) {
+            // We want to specifically catch TagLostExecption, and wrap other NfcExecption
+            // differently for now.
+            throw e;
         } catch (NfcException e) {
             throw new FeliCaException(e);
         }
@@ -183,9 +190,10 @@ public final class FeliCaLib {
      * @param tag  Tagクラスの参照をセットします
      * @param data 実行するコマンドパケットをセットします
      * @return byte[] コマンドの実行結果バイト列で戻ります
+     * @throws TagLostException if the tag went out of the field
      * @throws FeliCaException コマンドの発行に失敗した場合にスローされます
      */
-    public static final byte[] transceive(Tag tag, byte[] data) throws NfcException {
+    public static final byte[] transceive(Tag tag, byte[] data) throws NfcException, TagLostException {
         //NfcFはFeliCa
         NfcF nfcF = NfcF.get(tag);
         if (nfcF == null) throw new NfcException("tag is not FeliCa(NFC-F) ");
@@ -197,7 +205,8 @@ public final class FeliCaLib {
                 nfcF.close();
             }
         } catch (TagLostException e) {
-            return null; //Tag Lost
+            // We want to specifically pass through TagLostException.
+            throw e;
         } catch (IOException e) {
             throw new NfcException(e);
         }
