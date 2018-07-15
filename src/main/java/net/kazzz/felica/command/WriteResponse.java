@@ -11,10 +11,6 @@
  */
 package net.kazzz.felica.command;
 
-import net.kazzz.felica.lib.FeliCaLib;
-import net.kazzz.felica.lib.FeliCaLib.CommandResponse;
-import net.kazzz.felica.lib.Util;
-
 /**
  * Write コマンドのレスポンスを抽象化したクラスを提供します
  *
@@ -54,23 +50,6 @@ public class WriteResponse extends CommandResponse {
      */
     public int getStatusFlag2() {
         return this.statusFlag2;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("FeliCa Write Response \n");
-        sb.append(" コマンド名 : " + FeliCaLib.commandMap.get(this.responseCode) + "\n");
-        sb.append(" データ長 : " + this.length + "\n");
-        sb.append(" コマンドコード : " + Util.getHexString(this.responseCode) + "\n");
-        if (this.idm != null)
-            sb.append(" " + this.idm.toString() + "\n");
-        sb.append(" ステータスフラグ1 : " + Util.getHexString((byte) (this.statusFlag1 & 0xff)) + "\n");
-        sb.append(" ステータスフラグ2 : " + Util.getHexString((byte) (this.statusFlag2 & 0xff)) + "\n");
-        return sb.toString();
     }
 }
 

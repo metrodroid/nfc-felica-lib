@@ -14,11 +14,10 @@ package net.kazzz.felica.lib;
 import android.nfc.Tag;
 import android.nfc.TagLostException;
 import android.nfc.tech.NfcF;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.SparseArray;
 
 import net.kazzz.felica.FeliCaException;
+import net.kazzz.felica.command.CommandResponse;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -322,98 +321,6 @@ public final class FeliCaLib {
             }
             return buff.array();
         }
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("FeliCa コマンドパケット \n");
-            sb.append(" コマンド名:" + commandMap.get(this.commandCode) + "\n");
-            sb.append(" データ長: " + Util.getHexString((byte) (this.length & 0xff)) + "\n");
-            sb.append(" コマンドコード : " + Util.getHexString(this.commandCode) + "\n");
-            if (this.idm != null)
-                sb.append(" " + this.idm.toString() + "\n");
-            sb.append(" データ: " + Util.getHexString(this.data) + "\n");
-            return sb.toString();
-        }
-
-    }
-
-    /**
-     * FeliCa コマンドレスポンスクラスを提供します
-     *
-     * @author Kazz
-     * @since Android API Level 9
-     */
-    public static class CommandResponse {
-        protected final byte[] rawData;
-        protected final int length;      //全体のデータ長 (FeliCaには無い)
-        protected final byte responseCode;//コマンドレスポンスコード)
-        protected final IDm idm;          //FeliCa IDm
-        protected final byte[] data;      //コマンドデータ
-
-        /**
-         * コンストラクタ
-         *
-         * @param response 他のレスポンスをセット
-         */
-        public CommandResponse(CommandResponse response) {
-            this(response != null ? response.getBytes() : null);
-        }
-
-        /**
-         * コンストラクタ
-         *
-         * @param data コマンド実行結果で戻ったバイト列をセット
-         */
-        public CommandResponse(byte[] data) {
-            if (data != null) {
-                this.rawData = data;
-                this.length = data[0] & 0xff;
-                this.responseCode = data[1];
-                this.idm = new IDm(Arrays.copyOfRange(data, 2, 10));
-                this.data = Arrays.copyOfRange(data, 10, data.length);
-            } else {
-                this.rawData = null;
-                this.length = 0;
-                this.responseCode = 0;
-                this.idm = null;
-                this.data = null;
-            }
-        }
-
-        public IDm getIDm() {
-            return this.idm;
-        }
-
-        /**
-         * バイト列表現を戻します
-         *
-         * @return byte[] このデータのバイト列表現を戻します
-         */
-        public byte[] getBytes() {
-            return this.rawData;
-        }
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
-        @Override
-        public String toString() {
-            return " \n\n" +
-                    "FeliCa レスポンスパケット \n" +
-                    " コマンド名:" + commandMap.get(this.responseCode) + "\n" +
-                    " データ長: " + Util.getHexString((byte) (this.length & 0xff)) + "\n" +
-                    " レスポンスコード: " + Util.getHexString(this.responseCode) + "\n" +
-                    " " + this.idm.toString() + "\n" +
-                    " データ: " + Util.getHexString(this.data) + "\n";
-        }
-
-        public byte[] getData() {
-            return data;
-        }
     }
 
     /**
@@ -423,34 +330,9 @@ public final class FeliCaLib {
      * @date 2011/01/20
      * @since Android API Level 9
      */
-    public static class IDm implements Parcelable {
-        /**
-         * Parcelable need CREATOR field
-         **/
-        public static final Parcelable.Creator<IDm> CREATOR =
-                new Parcelable.Creator<IDm>() {
-                    public IDm createFromParcel(Parcel in) {
-                        return new IDm(in);
-                    }
-
-                    public IDm[] newArray(int size) {
-                        return new IDm[size];
-                    }
-                };
+    public static class IDm {
         final byte[] manufactureCode;
         final byte[] cardIdentification;
-
-        /**
-         * コンストラクタ
-         *
-         * @param in 入力するパーセル化オブジェクトをセット
-         */
-        public IDm(Parcel in) {
-            this.manufactureCode = new byte[in.readInt()];
-            in.readByteArray(this.manufactureCode);
-            this.cardIdentification = new byte[in.readInt()];
-            in.readByteArray(this.cardIdentification);
-        }
 
         /**
          * コンストラクタ
@@ -463,48 +345,12 @@ public final class FeliCaLib {
                     new byte[]{bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]};
         }
 
-        /* (non-Javadoc)
-         * @see android.os.Parcelable#describeContents()
-         */
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        /* (non-Javadoc)
-         * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
-         */
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            //配列長を先に書きだしておく
-            dest.writeInt(this.manufactureCode.length);
-            dest.writeByteArray(this.manufactureCode);
-
-            //配列長を先に書きだしておく
-            dest.writeInt(this.cardIdentification.length);
-            dest.writeByteArray(this.cardIdentification);
-        }
-
         public byte[] getBytes() {
             ByteBuffer buff = ByteBuffer.allocate(
                     this.manufactureCode.length + this.cardIdentification.length);
             buff.put(this.manufactureCode).put(this.cardIdentification);
             return buff.array();
         }
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
-        @Override
-        public String toString() {
-            return ("IDm (8byte) : " + Util.getHexString(this.getBytes()) + "\n") +
-                    " 製造者コード: " + Util.getHexString(this.manufactureCode) + "\n" +
-                    " カード識別番号:\n" +
-                    "   製造器:" + Util.getHexString(this.cardIdentification, 0, 2) + "\n" +
-                    "   日付:" + Util.getHexString(this.cardIdentification, 2, 2) + "\n" +
-                    "   シリアル:" + Util.getHexString(this.cardIdentification, 4, 2) + "\n";
-        }
-
     }
 
     /**
@@ -514,35 +360,9 @@ public final class FeliCaLib {
      * @date 2011/01/20
      * @since Android API Level 9
      */
-    public static class PMm implements Parcelable {
-        /**
-         * Parcelable need CREATOR field
-         **/
-        public static final Parcelable.Creator<PMm> CREATOR =
-                new Parcelable.Creator<PMm>() {
-                    public PMm createFromParcel(Parcel in) {
-                        return new PMm(in);
-                    }
-
-                    public PMm[] newArray(int size) {
-                        return new PMm[size];
-                    }
-                };
+    public static class PMm {
         final byte[] icCode;              // ROM種別, IC種別
         final byte[] maximumResponseTime; // 最大応答時間
-
-        /**
-         * コンストラクタ
-         *
-         * @param in 入力するパーセル化オブジェクトをセット
-         */
-        public PMm(Parcel in) {
-            this.icCode = new byte[in.readInt()];
-            in.readByteArray(this.icCode);
-
-            this.maximumResponseTime = new byte[in.readInt()];
-            in.readByteArray(this.maximumResponseTime);
-        }
 
         /**
          * コンストラクタ
@@ -555,52 +375,11 @@ public final class FeliCaLib {
                     new byte[]{bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]};
         }
 
-        /* (non-Javadoc)
-         * @see android.os.Parcelable#describeContents()
-         */
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        /* (non-Javadoc)
-         * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
-         */
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            //配列長を先に書きだす
-            dest.writeInt(this.icCode.length);
-            dest.writeByteArray(this.icCode);
-
-            //配列長を先に書きだす
-            dest.writeInt(this.maximumResponseTime.length);
-            dest.writeByteArray(this.maximumResponseTime);
-        }
-
         public byte[] getBytes() {
             ByteBuffer buff = ByteBuffer.allocate(
                     this.icCode.length + this.maximumResponseTime.length);
             buff.put(this.icCode).put(this.maximumResponseTime);
             return buff.array();
-        }
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
-        @Override
-        public String toString() {
-            return "PMm(製造パラメータ)\n" +
-                    " ICコード(2byte): " + Util.getHexString(this.icCode) + "\n" +
-                    "   ROM種別: " + Util.getHexString(this.icCode, 0, 1) + "\n" +
-                    "   IC 種別: " + Util.getHexString(this.icCode, 1, 1) + "\n" +
-                    "\n" +
-                    " 最大応答時間パラメタ(6byte)\n" +
-                    "  B3(request service):" + Util.getBinString(this.maximumResponseTime, 0, 1) + "\n" +
-                    "  B4(request response):" + Util.getBinString(this.maximumResponseTime, 1, 1) + "\n" +
-                    "  B5(authenticate):" + Util.getBinString(this.maximumResponseTime, 2, 1) + "\n" +
-                    "  B6(read):" + Util.getBinString(this.maximumResponseTime, 3, 1) + "\n" +
-                    "  B7(write):" + Util.getBinString(this.maximumResponseTime, 4, 1) + "\n" +
-                    "  B8():" + Util.getBinString(this.maximumResponseTime, 5, 1) + "\n";
         }
     }
 
@@ -630,14 +409,6 @@ public final class FeliCaLib {
 
         public byte[] getBytes() {
             return this.systemCode;
-        }
-
-        /* (non-Javadoc)
-        * @see java.lang.Object#toString()
-        */
-        @Override
-        public String toString() {
-            return ("SystemCode : " + Util.getHexString(this.systemCode) + "\n");
         }
 
         /**
@@ -713,74 +484,6 @@ public final class FeliCaLib {
             }
             return ret;
         }
-
-        /**
-         * サービスコードのアクセス権の意味は、JIS_X_6319_4 を参照しました。
-         *
-         * @author morishita_2
-         */
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append(Util.getHexString(serviceCodeLE));
-            if (serviceCodeLE != null) {
-                int accessInfo = serviceCodeLE[1] & 0x3F; // 下位6bitがアクセス情報
-                switch (accessInfo) {
-                    case 0x09:
-                        sb.append(" 固定長RW");
-                        break; // RW: ReadWrite
-                    case 0x0b:
-                        sb.append(" 固定長RO");
-                        break; // RO: ReadOnly
-                    case 0x0d:
-                        sb.append(" 循環RW");
-                        break;
-                    case 0x0f:
-                        sb.append(" 循環RO");
-                        break;
-                    case 0x11:
-                        sb.append(" 加減算直接");
-                        break;
-                    case 0x13:
-                        sb.append(" 加減算戻入");
-                        break;
-                    case 0x15:
-                        sb.append(" 加減算減算");
-                        break;
-                    case 0x17:
-                        sb.append(" 加減算RO");
-                        break;
-                    //
-                    case 0x08:
-                        sb.append(" 固定長RW(Locked)");
-                        break; // RW: ReadWrite
-                    case 0x0a:
-                        sb.append(" 固定長RO(Locked)");
-                        break; // RO: ReadOnly
-                    case 0x0c:
-                        sb.append(" 循環RW(Locked)");
-                        break;
-                    case 0x0e:
-                        sb.append(" 循環RO(Locked)");
-                        break;
-                    case 0x10:
-                        sb.append(" 加減算直接(Locked)");
-                        break;
-                    case 0x12:
-                        sb.append(" 加減算戻入(Locked)");
-                        break;
-                    case 0x14:
-                        sb.append(" 加減算減算(Locked)");
-                        break;
-                    case 0x16:
-                        sb.append(" 加減算RO(Locked)");
-                        break;
-                }
-
-            }
-            //sb.append("\n");
-            return sb.toString();
-        }
     }
 
     /**
@@ -827,22 +530,6 @@ public final class FeliCaLib {
 
             return buff.array();
         }
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            for (ServiceCode s : this.serviceCodes) {
-                sb.append(s.toString());
-            }
-
-            for (BlockListElement b : blockListElements) {
-                sb.append(b.toString());
-            }
-            return sb.toString();
-        }
     }
 
     /**
@@ -873,14 +560,6 @@ public final class FeliCaLib {
 
         public byte[] getBytes() {
             return this.data;
-        }
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
-        @Override
-        public String toString() {
-            return ("Block : " + Util.getHexString(this.data) + "\n");
         }
     }
 
@@ -932,18 +611,6 @@ public final class FeliCaLib {
                         .put(this.blockNumber[0]); //little endian
                 return buff.array();
             }
-        }
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
-        @Override
-        public String toString() {
-            return "ブロックリストエレメント\n" +
-                    "  データ長 : " + this.getBytes().length + " byte\n" +
-                    "  アクセスモード        : " + Util.getBinString((byte) (this.lengthAndaccessMode & 0x8F)) + "\n" +
-                    "  サービスコードリスト順: " + Util.getHexString(this.serviceCodeListOrder) + "\n" +
-                    "  ブロックナンバー      : " + Util.getHexString(this.blockNumber) + "\n";
         }
     }
 
@@ -1004,23 +671,5 @@ public final class FeliCaLib {
             }
             return result;
         }
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("メモリコンフィグレーションブロック(MC)\n");
-            sb.append("  NdefSupport  : " + this.isNdefSupport() + "\n");
-            sb.append("  MemoryConfig : \n");
-            for (int i = 0; i < this.data.length; i++) {
-                sb.append("    ブロック  " + i + " = "
-                        + (this.isWritable(i) ? "1:RW" : "0:RO") + "\n");
-            }
-            return sb.toString();
-        }
-
     }
-
 }

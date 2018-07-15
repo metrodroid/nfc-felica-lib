@@ -1,5 +1,7 @@
 # nfc-felica-lib
 
+[![Build Status](https://travis-ci.org/metrodroid/nfc-felica-lib.svg?branch=metrodroid-master)](https://travis-ci.org/metrodroid/nfc-felica-lib)
+
 An Android library for accessing [Sony FeliCa contactless smart cards][0] (NFC). This card is
 primarily used for [electronic money cards][1] in Japan.
 

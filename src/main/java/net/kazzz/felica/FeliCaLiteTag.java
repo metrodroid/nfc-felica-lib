@@ -13,15 +13,13 @@ package net.kazzz.felica;
 
 import android.nfc.Tag;
 import android.nfc.TagLostException;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import net.kazzz.felica.command.PollingResponse;
 import net.kazzz.felica.command.ReadResponse;
 import net.kazzz.felica.command.WriteResponse;
 import net.kazzz.felica.lib.FeliCaLib;
 import net.kazzz.felica.lib.FeliCaLib.CommandPacket;
-import net.kazzz.felica.lib.FeliCaLib.CommandResponse;
+import net.kazzz.felica.command.CommandResponse;
 import net.kazzz.felica.lib.FeliCaLib.IDm;
 import net.kazzz.felica.lib.FeliCaLib.MemoryConfigurationBlock;
 import net.kazzz.felica.lib.FeliCaLib.PMm;
@@ -43,42 +41,10 @@ import static net.kazzz.felica.lib.FeliCaLib.SYSTEMCODE_FELICA_LITE;
  * @since Android API Level 9
  */
 
-public class FeliCaLiteTag extends NfcTag {
-    /**
-     * Parcelable need CREATOR field
-     **/
-    public static final Parcelable.Creator<FeliCaLiteTag> CREATOR =
-            new Parcelable.Creator<FeliCaLiteTag>() {
-                public FeliCaLiteTag createFromParcel(Parcel in) {
-                    return new FeliCaLiteTag(in);
-                }
-
-                public FeliCaLiteTag[] newArray(int size) {
-                    return new FeliCaLiteTag[size];
-                }
-            };
-
+public class FeliCaLiteTag {
     protected Tag nfcTag;
     protected IDm idm;
     protected PMm pmm;
-
-    /**
-     * コンストラクタ
-     *
-     * @param in 入力するパーセル化オブジェクトをセット
-     */
-    public FeliCaLiteTag(Parcel in) {
-        this.readFromParcel(in);
-    }
-
-    /**
-     * コンストラクタ
-     *
-     * @param nfcTag NFCTagへの参照をセット
-     */
-    public FeliCaLiteTag(Parcelable nfcTag) {
-        this.nfcTag = (Tag) nfcTag;
-    }
 
     /**
      * コンストラクタ
@@ -91,28 +57,6 @@ public class FeliCaLiteTag extends NfcTag {
         this.nfcTag = nfcTag;
         this.idm = idm;
         this.pmm = pmm;
-    }
-
-
-    /* (non-Javadoc)
-     * @see net.kazzz.felica.NfcTag#writeToParcel(android.os.Parcel, int)
-     */
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.nfcTag, 0);
-        dest.writeParcelable(this.idm, 0);
-        dest.writeParcelable(this.pmm, 0);
-    }
-
-    /* (non-Javadoc)
-     * @see net.kazzz.felica.NfcTag#readFromParcel(android.os.Parcel)
-     */
-    @Override
-    public void readFromParcel(Parcel source) {
-        ClassLoader cl = this.getClass().getClassLoader();
-        this.nfcTag = source.readParcelable(cl);
-        this.idm = source.readParcelable(cl);
-        this.pmm = source.readParcelable(cl);
     }
 
     /**
@@ -234,19 +178,5 @@ public class FeliCaLiteTag extends NfcTag {
                 new CommandPacket(COMMAND_WRITE_WO_ENCRYPTION, idm, b.array());
         CommandResponse r = FeliCaLib.execute(this.nfcTag, writeWoEncrypt);
         return new WriteResponse(r);
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("FeliCaLiteTag \n");
-        if (this.idm != null)
-            sb.append(this.idm.toString()).append("\n");
-        if (this.pmm != null)
-            sb.append(this.pmm.toString()).append("\n");
-        return sb.toString();
     }
 }
