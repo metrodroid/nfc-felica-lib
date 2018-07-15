@@ -19,8 +19,6 @@ import android.os.Parcelable;
 import android.util.SparseArray;
 
 import net.kazzz.felica.FeliCaException;
-import net.kazzz.felica.IFeliCaByteData;
-import net.kazzz.felica.command.IFeliCaCommand;
 import net.kazzz.nfc.NfcException;
 
 import java.io.IOException;
@@ -157,7 +155,7 @@ public final class FeliCaLib {
      * @throws FeliCaException コマンドの発行に失敗した場合にスローされます
      * @throws TagLostException if the tag went out of the field
      */
-    public static final CommandResponse execute(Tag tag, CommandPacket commandPacket)
+    public static CommandResponse execute(Tag tag, CommandPacket commandPacket)
             throws FeliCaException, TagLostException {
         byte[] result = executeRaw(tag, commandPacket.getBytes());
         return new CommandResponse(result);
@@ -193,7 +191,7 @@ public final class FeliCaLib {
      * @throws TagLostException if the tag went out of the field
      * @throws FeliCaException コマンドの発行に失敗した場合にスローされます
      */
-    public static final byte[] transceive(Tag tag, byte[] data) throws NfcException, TagLostException {
+    public static byte[] transceive(Tag tag, byte[] data) throws NfcException, TagLostException {
         //NfcFはFeliCa
         NfcF nfcF = NfcF.get(tag);
         if (nfcF == null) throw new NfcException("tag is not FeliCa(NFC-F) ");
@@ -219,7 +217,7 @@ public final class FeliCaLib {
      * @date 2011/01/20
      * @since Android API Level 9
      */
-    public static class CommandPacket implements IFeliCaCommand {
+    public static class CommandPacket {
         protected final int length;     //コマンド全体のデータ長
         protected final byte commandCode;//コマンドコード
         protected final IDm idm;        //FeliCa IDm
@@ -306,10 +304,6 @@ public final class FeliCaLib {
                 throw new FeliCaException("command data too long (less than 255byte)");
         }
 
-        /* (non-Javadoc)
-         * @see net.felica.IFeliCaCommand#getIDm()
-         */
-        @Override
         public IDm getIDm() {
             return this.idm;
         }
@@ -354,7 +348,7 @@ public final class FeliCaLib {
      * @author Kazz
      * @since Android API Level 9
      */
-    public static class CommandResponse implements IFeliCaCommand {
+    public static class CommandResponse {
         protected final byte[] rawData;
         protected final int length;      //全体のデータ長 (FeliCaには無い)
         protected final byte responseCode;//コマンドレスポンスコード)
@@ -391,10 +385,6 @@ public final class FeliCaLib {
             }
         }
 
-        /* (non-Javadoc)
-         * @see net.felica.IFeliCaCommand#getIDm()
-         */
-        @Override
         public IDm getIDm() {
             return this.idm;
         }
@@ -434,7 +424,7 @@ public final class FeliCaLib {
      * @date 2011/01/20
      * @since Android API Level 9
      */
-    public static class IDm implements Parcelable, IFeliCaByteData {
+    public static class IDm implements Parcelable {
         /**
          * Parcelable need CREATOR field
          **/
@@ -496,10 +486,6 @@ public final class FeliCaLib {
             dest.writeByteArray(this.cardIdentification);
         }
 
-        /* (non-Javadoc)
-         * @see net.felica.IFeliCaByteData#getBytes()
-         */
-        @Override
         public byte[] getBytes() {
             ByteBuffer buff = ByteBuffer.allocate(
                     this.manufactureCode.length + this.cardIdentification.length);
@@ -529,7 +515,7 @@ public final class FeliCaLib {
      * @date 2011/01/20
      * @since Android API Level 9
      */
-    public static class PMm implements Parcelable, IFeliCaByteData {
+    public static class PMm implements Parcelable {
         /**
          * Parcelable need CREATOR field
          **/
@@ -592,10 +578,6 @@ public final class FeliCaLib {
             dest.writeByteArray(this.maximumResponseTime);
         }
 
-        /* (non-Javadoc)
-         * @see net.felica.IFeliCaByteData#getBytes()
-         */
-        @Override
         public byte[] getBytes() {
             ByteBuffer buff = ByteBuffer.allocate(
                     this.icCode.length + this.maximumResponseTime.length);
@@ -630,7 +612,7 @@ public final class FeliCaLib {
      * @date 2011/01/20
      * @since Android API Level 9
      */
-    public static class SystemCode implements IFeliCaByteData {
+    public static class SystemCode {
         final byte[] systemCode;
 
         /**
@@ -647,7 +629,6 @@ public final class FeliCaLib {
             this(new byte[]{(byte) (systemCode >> 8), (byte) (systemCode & 0xff)});
         }
 
-        @Override
         public byte[] getBytes() {
             return this.systemCode;
         }
@@ -810,7 +791,7 @@ public final class FeliCaLib {
      * @date 2011/01/20
      * @since Android API Level 9
      */
-    public static class Service implements IFeliCaByteData {
+    public static class Service {
         final ServiceCode[] serviceCodes;
         final BlockListElement[] blockListElements;
 
@@ -825,10 +806,6 @@ public final class FeliCaLib {
             this.blockListElements = blockListElements;
         }
 
-        /* (non-Javadoc)
-         * @see net.felica.IFeliCaByteData#getBytes()
-         */
-        @Override
         public byte[] getBytes() {
 
             int length = 0;
@@ -876,7 +853,7 @@ public final class FeliCaLib {
      * @date 2011/2/20
      * @since Android API Level 9
      */
-    public static class Block implements IFeliCaByteData {
+    public static class Block {
         final byte[] data;
 
         /**
@@ -895,10 +872,6 @@ public final class FeliCaLib {
             this.data = data;
         }
 
-        /* (non-Javadoc)
-         * @see net.felica.IFeliCaByteData#getBytes()
-         */
-        @Override
         public byte[] getBytes() {
             return this.data;
         }
@@ -919,7 +892,7 @@ public final class FeliCaLib {
      * @date 2011/01/20
      * @since Android API Level 9
      */
-    public static class BlockListElement implements IFeliCaByteData {
+    public static class BlockListElement {
         public static final byte LENGTH_2_BYTE = (byte) 0x80;
         public static final byte LENGTH_3_BYTE = (byte) 0x00;
         public static final byte ACCESSMODE_DECREMENT = 0x00;
@@ -945,10 +918,6 @@ public final class FeliCaLib {
             this.blockNumber = blockNumber;
         }
 
-        /* (non-Javadoc)
-         * @see net.felica.IFeliCaByteData#getBytes()
-         */
-        @Override
         public byte[] getBytes() {
             if ((this.lengthAndaccessMode & LENGTH_2_BYTE) == 1) {
                 ByteBuffer buff = ByteBuffer.allocate(2);
@@ -986,7 +955,7 @@ public final class FeliCaLib {
      * @date 2011/02/21
      * @since Android API Level 9
      */
-    public static class MemoryConfigurationBlock extends Block implements IFeliCaByteData {
+    public static class MemoryConfigurationBlock extends Block {
         /**
          * コンストラクタ
          *
@@ -1002,8 +971,7 @@ public final class FeliCaLib {
          * @return boolean NDEFをサポートしている場合trueが戻ります
          */
         public boolean isNdefSupport() {
-            if (this.data == null) return false;
-            return (this.data[3] & (byte) 0xff) == 1;
+            return this.data != null && (this.data[3] & (byte) 0xff) == 1;
         }
 
         /**
@@ -1019,7 +987,7 @@ public final class FeliCaLib {
          * ブロック中の領域 (0x00h～0x0fh)が書きこみ可能な否かを検査します
          *
          * @param addrs 調べたいブロック番号へのアドレスをセット (複数セットした場合はand演算されます)
-         * @return　書き込み可能な場合にはtrueが戻ります
+         * @return 書き込み可能な場合にはtrueが戻ります
          */
         public boolean isWritable(int... addrs) {
             if (this.data == null) return false;
@@ -1029,12 +997,11 @@ public final class FeliCaLib {
                 byte b = (byte) ((a & 0xff) + 1);
                 if (a < 8) {
                     result &= (this.data[0] & b) == b;
-                    continue;
                 } else if (a < 16) {
                     result &= (this.data[1] & b) == b;
-                    continue;
-                } else
+                } else {
                     result &= (this.data[2] & b) == b;
+                }
             }
             return result;
         }

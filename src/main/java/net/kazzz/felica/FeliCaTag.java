@@ -215,7 +215,7 @@ public class FeliCaTag extends NfcTag {
      */
     public ServiceCode[] getServiceCodeList() throws FeliCaException, TagLostException {
         int index = 1; // 0番目は root areaなので1オリジンで開始する
-        List<ServiceCode> serviceCodeList = new ArrayList<ServiceCode>();
+        List<ServiceCode> serviceCodeList = new ArrayList<>();
         while (true) {
             byte[] bytes = doSearchServiceCode(index); // 1件1件 通信して聞き出します。
             if (bytes.length != 2 && bytes.length != 4)
@@ -276,8 +276,8 @@ public class FeliCaTag extends NfcTag {
         CommandPacket readWoEncrypt =
                 new CommandPacket(COMMAND_READ_WO_ENCRYPTION, idm
                         , (byte) 0x01         // サービス数
-                        , (byte) bytes[1]
-                        , (byte) bytes[0]             // サービスコード (little endian)
+                        , bytes[1]
+                        , bytes[0]             // サービスコード (little endian)
                         , (byte) 0x01                 // 同時読み込みブロック数
                         , (byte) 0x80, addr);       // ブロックリスト
         CommandResponse r = FeliCaLib.execute(this.nfcTag, readWoEncrypt);
@@ -303,10 +303,10 @@ public class FeliCaTag extends NfcTag {
         byte[] bytes = serviceCode.getBytes();
         ByteBuffer b = ByteBuffer.allocate(22); // コマンド 6バイト + 書きだすデータ 16バイト
         b.put(new byte[]{(byte) 0x01             // Number of Service
-                , (byte) bytes[0]                // サービスコード (little endian)
-                , (byte) bytes[1]
+                , bytes[0]                // サービスコード (little endian)
+                , bytes[1]
                 , (byte) 0x01                    // 同時書き込みブロック数
-                , (byte) 0x80, (byte) addr       // ブロックリスト 0x80は (2バイトブロックエレメント+ランダムサービス)
+                , (byte) 0x80, addr       // ブロックリスト 0x80は (2バイトブロックエレメント+ランダムサービス)
         });
         b.put(buff, 0, buff.length > 16 ? 16 : buff.length); //書き出すデータ  (一度につき16バイト)
         CommandPacket writeWoEncrypt =

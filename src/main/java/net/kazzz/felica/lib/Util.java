@@ -95,7 +95,7 @@ public final class Util {
         if (split.length <= 1) {
             target = byteArray;
         } else if (split.length < 2) {
-            target = Arrays.copyOfRange(byteArray, 0, 0 + split[0]);
+            target = Arrays.copyOfRange(byteArray, 0, split[0]);
         } else {
             target = Arrays.copyOfRange(byteArray, split[0], split[0] + split[1]);
         }
@@ -127,7 +127,7 @@ public final class Util {
         if (split.length <= 1) {
             target = byteArray;
         } else if (split.length < 2) {
-            target = Arrays.copyOfRange(byteArray, 0, 0 + split[0]);
+            target = Arrays.copyOfRange(byteArray, 0, split[0]);
         } else {
             target = Arrays.copyOfRange(byteArray, split[0], split[0] + split[1]);
         }

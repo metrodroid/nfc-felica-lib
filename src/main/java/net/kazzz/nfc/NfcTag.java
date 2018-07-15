@@ -132,11 +132,10 @@ public class NfcTag implements Parcelable {
      */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("NfcTag \n");
-        sb.append(" idbytes:" + Util.getHexString(this.idbytes) + "\n");
-        sb.append(" nfcTag: " + this.nfcTag.toString() + "\n");
-        return sb.toString();
+        String sb = "NfcTag \n" +
+                " idbytes:" + Util.getHexString(this.idbytes) + "\n" +
+                " nfcTag: " + this.nfcTag.toString() + "\n";
+        return sb;
     }
 
 }

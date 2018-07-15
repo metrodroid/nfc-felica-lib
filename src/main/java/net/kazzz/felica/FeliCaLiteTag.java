@@ -198,12 +198,11 @@ public class FeliCaLiteTag extends NfcTag {
         }
         // read without encryption
         CommandPacket readWoEncrypt =
-                new CommandPacket(COMMAND_READ_WO_ENCRYPTION, idm, new byte[]{
-                        (byte) 0x01                                 // サービス数
+                new CommandPacket(COMMAND_READ_WO_ENCRYPTION, idm, (byte) 0x01                                 // サービス数
                         , (byte) (SERVICE_FELICA_LITE_READONLY >> 8)  //サービスコード : リードオンリー
                         , (byte) (SERVICE_FELICA_LITE_READONLY & 0xff)
                         , (byte) 0x01                 // 同時読み込みブロック数
-                        , (byte) 0x80, addr});       // ブロックリスト
+                        , (byte) 0x80, addr);       // ブロックリスト
         CommandResponse r = FeliCaLib.execute(this.nfcTag, readWoEncrypt);
         return new ReadResponse(r);
     }
