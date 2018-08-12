@@ -38,11 +38,11 @@ import static net.kazzz.felica.FeliCaLib.COMMAND_SEARCH_SERVICECODE;
  * @since Android API Level 9
  */
 
-public class FeliCaTag {
+public final class FeliCaTag {
     private static final String TAG = "FeliCaTag";
-    protected Tag nfcTag;
-    protected IDm idm;
-    protected PMm pmm;
+    private Tag nfcTag;
+    private IDm idm;
+    private PMm pmm;
 
     public FeliCaTag(Tag nfcTag) {
         this(nfcTag, null, null);
@@ -55,7 +55,7 @@ public class FeliCaTag {
      * @param idm    FeliCa IDmをセット
      * @param pmm    FeliCa PMmをセット
      */
-    public FeliCaTag(Tag nfcTag, IDm idm, PMm pmm) {
+    private FeliCaTag(Tag nfcTag, IDm idm, PMm pmm) {
         this.nfcTag = nfcTag;
         this.idm = idm;
         this.pmm = pmm;
@@ -104,9 +104,8 @@ public class FeliCaTag {
      * FeliCa IDmを取得します
      *
      * @return IDm IDmが戻ります
-     * @throws FeliCaException
      */
-    public IDm getIDm() throws FeliCaException {
+    public IDm getIDm() {
         return this.idm;
     }
 
@@ -114,9 +113,8 @@ public class FeliCaTag {
      * FeliCa PMmを取得します
      *
      * @return PMm PMmが戻ります
-     * @throws FeliCaException
      */
-    public PMm getPMm() throws FeliCaException {
+    public PMm getPMm() {
         return this.pmm;
     }
 
