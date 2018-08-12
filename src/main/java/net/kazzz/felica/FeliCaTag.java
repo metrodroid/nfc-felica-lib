@@ -15,17 +15,12 @@ import android.nfc.Tag;
 import android.nfc.TagLostException;
 import android.util.Log;
 
-import net.kazzz.felica.command.PollingResponse;
-import net.kazzz.felica.command.ReadResponse;
-import net.kazzz.felica.command.WriteResponse;
 import net.kazzz.felica.FeliCaLib.CommandPacket;
-import net.kazzz.felica.command.CommandResponse;
 import net.kazzz.felica.FeliCaLib.IDm;
 import net.kazzz.felica.FeliCaLib.PMm;
 import net.kazzz.felica.FeliCaLib.ServiceCode;
 import net.kazzz.felica.FeliCaLib.SystemCode;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +29,6 @@ import static net.kazzz.felica.FeliCaLib.COMMAND_POLLING;
 import static net.kazzz.felica.FeliCaLib.COMMAND_READ_WO_ENCRYPTION;
 import static net.kazzz.felica.FeliCaLib.COMMAND_REQUEST_SYSTEMCODE;
 import static net.kazzz.felica.FeliCaLib.COMMAND_SEARCH_SERVICECODE;
-import static net.kazzz.felica.FeliCaLib.COMMAND_WRITE_WO_ENCRYPTION;
 
 /**
  * FeliCa仕様に準拠した FeliCaタグクラスを提供します
@@ -86,8 +80,8 @@ public class FeliCaTag {
                         , (byte) (systemCode & 0xff) // System code (lower byte)
                         , (byte) 0x01                // Request code (system code request)
                         , (byte) 0x00);              // Maximum number of slots possible to respond
-        CommandResponse r = FeliCaLib.execute(this.nfcTag, polling);
-        PollingResponse pr = new PollingResponse(r);
+        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, polling);
+        FeliCaLib.PollingResponse pr = new FeliCaLib.PollingResponse(r);
         this.idm = pr.getIDm();
         this.pmm = pr.getPMm();
         return pr.getBytes();
@@ -136,7 +130,7 @@ public class FeliCaTag {
     public final SystemCode[] getSystemCodeList() throws FeliCaException, TagLostException {
         //request systemCode 
         CommandPacket reqSystemCode = new CommandPacket(COMMAND_REQUEST_SYSTEMCODE, idm);
-        CommandResponse r = FeliCaLib.execute(this.nfcTag, reqSystemCode);
+        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, reqSystemCode);
 
         byte[] retBytes = r.getBytes();
         if (retBytes == null) {
@@ -193,7 +187,7 @@ public class FeliCaTag {
         CommandPacket reqServiceCode =
                 new CommandPacket(COMMAND_SEARCH_SERVICECODE, idm
                         , (byte) (index & 0xff), (byte) (index >> 8));
-        CommandResponse r = FeliCaLib.execute(this.nfcTag, reqServiceCode);
+        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, reqServiceCode);
         byte[] bytes = r.getBytes();
         if (bytes == null || bytes.length <= 0 || bytes[1] != (byte) 0x0b) { // 正常応答かどうか
             Log.w(TAG, "Response code is not 0x0b");
@@ -212,8 +206,8 @@ public class FeliCaTag {
      * @throws TagLostException if the tag went out of the field
      * @throws FeliCaException
      */
-    public ReadResponse readWithoutEncryption(ServiceCode serviceCode,
-                                              byte addr) throws FeliCaException, TagLostException {
+    public FeliCaLib.ReadResponse readWithoutEncryption(ServiceCode serviceCode,
+                                                        byte addr) throws FeliCaException, TagLostException {
         if (this.nfcTag == null) {
             throw new FeliCaException("tagService is null. no read execution");
         }
@@ -226,38 +220,8 @@ public class FeliCaTag {
                         , bytes[0]             // サービスコード (little endian)
                         , (byte) 0x01                 // 同時読み込みブロック数
                         , (byte) 0x80, addr);       // ブロックリスト
-        CommandResponse r = FeliCaLib.execute(this.nfcTag, readWoEncrypt);
-        return new ReadResponse(r);
+        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, readWoEncrypt);
+        return new FeliCaLib.ReadResponse(r);
     }
 
-    /**
-     * 認証不要領域のデータを書き込みます
-     *
-     * @param serviceCode サービスコードをセット
-     * @param addr        データをセットするブロックのアドレス(0オリジン)をセット
-     * @param buff        書きこむデータをセット (16バイト)
-     * @return WriteResponse 書き込んだ結果レスポンスオブジェクトが戻ります
-     * @throws TagLostException if the tag went out of the field
-     * @throws FeliCaException
-     */
-    public WriteResponse writeWithoutEncryption(ServiceCode serviceCode, byte addr, byte[] buff)
-            throws FeliCaException, TagLostException {
-        if (this.nfcTag == null) {
-            throw new FeliCaException("tagService is null. no write execution");
-        }
-        // write without encryption
-        byte[] bytes = serviceCode.getBytes();
-        ByteBuffer b = ByteBuffer.allocate(22); // コマンド 6バイト + 書きだすデータ 16バイト
-        b.put(new byte[]{(byte) 0x01             // Number of Service
-                , bytes[0]                // サービスコード (little endian)
-                , bytes[1]
-                , (byte) 0x01                    // 同時書き込みブロック数
-                , (byte) 0x80, addr       // ブロックリスト 0x80は (2バイトブロックエレメント+ランダムサービス)
-        });
-        b.put(buff, 0, buff.length > 16 ? 16 : buff.length); //書き出すデータ  (一度につき16バイト)
-        CommandPacket writeWoEncrypt =
-                new CommandPacket(COMMAND_WRITE_WO_ENCRYPTION, idm, b.array());
-        CommandResponse r = FeliCaLib.execute(this.nfcTag, writeWoEncrypt);
-        return new WriteResponse(r);
-    }
 }
