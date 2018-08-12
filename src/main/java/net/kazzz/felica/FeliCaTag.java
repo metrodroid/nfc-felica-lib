@@ -18,24 +18,23 @@ import android.util.Log;
 import net.kazzz.felica.command.PollingResponse;
 import net.kazzz.felica.command.ReadResponse;
 import net.kazzz.felica.command.WriteResponse;
-import net.kazzz.felica.lib.FeliCaLib;
-import net.kazzz.felica.lib.FeliCaLib.CommandPacket;
+import net.kazzz.felica.FeliCaLib.CommandPacket;
 import net.kazzz.felica.command.CommandResponse;
-import net.kazzz.felica.lib.FeliCaLib.IDm;
-import net.kazzz.felica.lib.FeliCaLib.PMm;
-import net.kazzz.felica.lib.FeliCaLib.ServiceCode;
-import net.kazzz.felica.lib.FeliCaLib.SystemCode;
+import net.kazzz.felica.FeliCaLib.IDm;
+import net.kazzz.felica.FeliCaLib.PMm;
+import net.kazzz.felica.FeliCaLib.ServiceCode;
+import net.kazzz.felica.FeliCaLib.SystemCode;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static net.kazzz.felica.lib.FeliCaLib.COMMAND_POLLING;
-import static net.kazzz.felica.lib.FeliCaLib.COMMAND_READ_WO_ENCRYPTION;
-import static net.kazzz.felica.lib.FeliCaLib.COMMAND_REQUEST_SYSTEMCODE;
-import static net.kazzz.felica.lib.FeliCaLib.COMMAND_SEARCH_SERVICECODE;
-import static net.kazzz.felica.lib.FeliCaLib.COMMAND_WRITE_WO_ENCRYPTION;
+import static net.kazzz.felica.FeliCaLib.COMMAND_POLLING;
+import static net.kazzz.felica.FeliCaLib.COMMAND_READ_WO_ENCRYPTION;
+import static net.kazzz.felica.FeliCaLib.COMMAND_REQUEST_SYSTEMCODE;
+import static net.kazzz.felica.FeliCaLib.COMMAND_SEARCH_SERVICECODE;
+import static net.kazzz.felica.FeliCaLib.COMMAND_WRITE_WO_ENCRYPTION;
 
 /**
  * FeliCa仕様に準拠した FeliCaタグクラスを提供します

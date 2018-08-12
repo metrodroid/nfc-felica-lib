@@ -1,6 +1,6 @@
 package net.kazzz.felica.command;
 
-import net.kazzz.felica.lib.FeliCaLib;
+import net.kazzz.felica.FeliCaLib;
 
 import java.util.Arrays;
 

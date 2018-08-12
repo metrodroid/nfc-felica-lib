@@ -11,7 +11,7 @@
  */
 package net.kazzz.felica.command;
 
-import net.kazzz.felica.lib.FeliCaLib.PMm;
+import net.kazzz.felica.FeliCaLib.PMm;
 
 import java.util.Arrays;
 

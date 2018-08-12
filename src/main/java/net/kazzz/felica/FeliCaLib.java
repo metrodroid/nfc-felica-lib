@@ -9,7 +9,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.kazzz.felica.lib;
+package net.kazzz.felica;
 
 import android.nfc.Tag;
 import android.nfc.TagLostException;
@@ -79,18 +79,9 @@ public final class FeliCaLib {
     public static final int SYSTEMCODE_FELICA_LITE = 0x88b4; // FeliCa Lite
     public static final int SYSTEMCODE_COMMON = 0xfe00;      // 共通領域
     public static final int SYSTEMCODE_CYBERNE = 0x0003;     // サイバネ領域
-    public static final int SYSTEMCODE_EDY = 0xfe00;         // Edy (=共通領域)
-    public static final int SYSTEMCODE_SZT = 0x8005;         // Shenzhen Tong (PRC)
-    public static final int SYSTEMCODE_OCTOPUS = 0x8008;     // Octopus (Hong Kong)
-    public static final int SYSTEMCODE_SUICA = 0x0003;       // Suica (=サイバネ領域)
-    public static final int SYSTEMCODE_PASMO = 0x0003;       // Pasmo (=サイバネ領域)
-    // サービスコード suica/pasmo (little endian)
-    public static final int SERVICE_SUICA_INOUT = 0x108f;           // SUICA/PASMO 入退場記録
-    public static final int SERVICE_SUICA_HISTORY = 0x090f;         // SUICA/PASMO履歴
+
     public static final int SERVICE_FELICA_LITE_READONLY = 0x0b00;  // FeliCa Lite RO権限
     public static final int SERVICE_FELICA_LITE_READWRITE = 0x0900; // FeliCa Lite RW権限
-    public static final int SERVICE_OCTOPUS = 0x0117;
-    public static final int SERVICE_SZT = 0x0118;
     //アクセス属性 (サービスコードの下6ビット
     public static final int RANDOM_RW_AUTH = 0x08;   // ランダムサービス(リード/ライト:認証必要) 001000b
     public static final int RANDOM_RW_WOAUTH = 0x09; // ランダムサービス(リード/ライト:認証不要) 001001b
