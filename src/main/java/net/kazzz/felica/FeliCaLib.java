@@ -14,7 +14,6 @@ package net.kazzz.felica;
 import android.nfc.Tag;
 import android.nfc.TagLostException;
 import android.nfc.tech.NfcF;
-import android.util.SparseArray;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
