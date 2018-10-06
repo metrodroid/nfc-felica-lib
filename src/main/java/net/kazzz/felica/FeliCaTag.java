@@ -169,7 +169,7 @@ public final class FeliCaTag {
                 break;
             }
         }
-        return serviceCodeList.toArray(new ServiceCode[serviceCodeList.size()]);
+        return serviceCodeList.toArray(new ServiceCode[0]);
     }
 
     /**
