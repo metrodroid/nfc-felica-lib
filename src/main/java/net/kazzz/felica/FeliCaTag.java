@@ -78,10 +78,16 @@ public final class FeliCaTag {
                 , (byte) (systemCode & 0xff) // System code (lower byte)
                 , (byte) 0x01                // Request code (system code request)
                 , (byte) 0x00);
-        FeliCaLib.PollingResponse pr = new FeliCaLib.PollingResponse(r);
-        this.idm = pr.getIDm();
-        this.pmm = pr.getPMm();
-        return pr.getBytes();
+        byte[]data = r.getBytes();
+        if (data != null && data.length >= 10) {
+            this.idm = new IDm(Arrays.copyOfRange(data, 2, 10));
+        } else
+            this.idm = null;
+        if (data != null && data.length >= 18) {
+            this.pmm = new PMm(Arrays.copyOfRange(data, 10, 18));
+        } else
+            this.pmm = null;
+        return data;
     }
 
     /**

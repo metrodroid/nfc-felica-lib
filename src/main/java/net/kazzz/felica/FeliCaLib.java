@@ -416,38 +416,4 @@ public final class FeliCaLib {
             return this.blockCount;
         }
     }
-
-    /**
-     * Pollingコマンドのレスポンスを抽象化したクラスを提供します
-     *
-     * @author Kazzz
-     * @since Android API Level 9
-     */
-
-    public static class PollingResponse extends CommandResponse {
-        final PMm pmm;
-
-        /**
-         * コンストラクタ
-         *
-         * @param response コマンド実行結果で戻ったバイト列をセット
-         */
-        PollingResponse(CommandResponse response) {
-            super(response);
-            if (this.data != null && this.data.length >= 8) {
-                this.pmm = new PMm(Arrays.copyOfRange(this.data, 0, 8));
-            } else {
-                this.pmm = null;
-            }
-        }
-
-        /**
-         * PMmを取得します
-         *
-         * @return PMm pmmが戻ります
-         */
-        public PMm getPMm() {
-            return this.pmm;
-        }
-    }
 }
