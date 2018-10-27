@@ -20,6 +20,7 @@ import net.kazzz.felica.FeliCaLib.PMm;
 import net.kazzz.felica.FeliCaLib.ServiceCode;
 import net.kazzz.felica.FeliCaLib.SystemCode;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,16 +70,15 @@ public final class FeliCaTag {
      * @throws TagLostException if the tag went out of the field
      * @return byte[] システムコードの配列が戻ります
      */
-    public byte[] polling(int systemCode) throws FeliCaException, TagLostException {
+    public byte[] polling(int systemCode) throws IOException, TagLostException {
         if (this.nfcTag == null) {
-            throw new FeliCaException("tagService is null. no polling execution");
+            throw new IOException("tagService is null. no polling execution");
         }
-        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, COMMAND_POLLING
+        byte[]data = FeliCaLib.execute(this.nfcTag, COMMAND_POLLING
                 , (byte) (systemCode >> 8)   // System code (upper byte)
                 , (byte) (systemCode & 0xff) // System code (lower byte)
                 , (byte) 0x01                // Request code (system code request)
                 , (byte) 0x00);
-        byte[]data = r.getBytes();
         if (data != null && data.length >= 10) {
             this.idm = new IDm(Arrays.copyOfRange(data, 2, 10));
         } else
@@ -98,7 +98,7 @@ public final class FeliCaTag {
      * @throws FeliCaException
      * @return IDm IDmが戻ります
      */
-    public IDm pollingAndGetIDm(int systemCode) throws FeliCaException, TagLostException {
+    public IDm pollingAndGetIDm(int systemCode) throws IOException, TagLostException {
         this.polling(systemCode);
         return this.idm;
     }
@@ -128,11 +128,10 @@ public final class FeliCaTag {
      * @throws FeliCaException
      * @throws TagLostException if the tag went out of the field
      */
-    public final SystemCode[] getSystemCodeList() throws FeliCaException, TagLostException {
+    public final SystemCode[] getSystemCodeList() throws IOException, TagLostException {
         //request systemCode 
-        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, COMMAND_REQUEST_SYSTEMCODE, idm);
+        byte[] retBytes = FeliCaLib.execute(this.nfcTag, COMMAND_REQUEST_SYSTEMCODE, idm);
 
-        byte[] retBytes = r.getBytes();
         if (retBytes == null) {
             // No system codes were received from the card.
             return new SystemCode[0];
@@ -153,7 +152,7 @@ public final class FeliCaTag {
      * @throws TagLostException if the tag went out of the field
      * @throws FeliCaException
      */
-    public ServiceCode[] getServiceCodeList() throws FeliCaException, TagLostException {
+    public ServiceCode[] getServiceCodeList() throws IOException, TagLostException {
         int index = 1; // 0番目は root areaなので1オリジンで開始する
         List<ServiceCode> serviceCodeList = new ArrayList<>();
         while (true) {
@@ -183,10 +182,9 @@ public final class FeliCaTag {
      * @throws TagLostException if the tag went out of the field
      * @throws FeliCaException
      */
-    protected byte[] doSearchServiceCode(int index) throws FeliCaException, TagLostException {
-        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, COMMAND_SEARCH_SERVICECODE, idm
+    protected byte[] doSearchServiceCode(int index) throws IOException, TagLostException {
+        byte[] bytes = FeliCaLib.execute(this.nfcTag, COMMAND_SEARCH_SERVICECODE, idm
                 , (byte) (index & 0xff), (byte) (index >> 8));
-        byte[] bytes = r.getBytes();
         if (bytes == null || bytes.length <= 0 || bytes[1] != (byte) 0x0b) { // 正常応答かどうか
             Log.w(TAG, "Response code is not 0x0b");
             // throw new FeliCaException("ResponseCode is not 0x0b");
@@ -205,19 +203,19 @@ public final class FeliCaTag {
      * @throws FeliCaException
      */
     public FeliCaLib.ReadResponse readWithoutEncryption(ServiceCode serviceCode,
-                                                        byte addr) throws FeliCaException, TagLostException {
+                                                        byte addr) throws IOException, TagLostException {
         if (this.nfcTag == null) {
-            throw new FeliCaException("tagService is null. no read execution");
+            throw new IOException("tagService is null. no read execution");
         }
         // read without encryption
         byte[] bytes = serviceCode.getBytes();
-        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, COMMAND_READ_WO_ENCRYPTION, idm
+        byte[] resp = FeliCaLib.execute(this.nfcTag, COMMAND_READ_WO_ENCRYPTION, idm
                 , (byte) 0x01         // サービス数
                 , bytes[1]
                 , bytes[0]             // サービスコード (little endian)
                 , (byte) 0x01                 // 同時読み込みブロック数
                 , (byte) 0x80, addr);
-        return new FeliCaLib.ReadResponse(r);
+        return new FeliCaLib.ReadResponse(new FeliCaLib.CommandResponse (resp));
     }
 
 }
