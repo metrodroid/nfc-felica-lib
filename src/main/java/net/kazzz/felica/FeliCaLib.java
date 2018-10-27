@@ -78,20 +78,22 @@ public final class FeliCaLib {
     public static final int SERVICE_FELICA_LITE_READONLY = 0x0b00;  // FeliCa Lite RO権限
     public static final int SERVICE_FELICA_LITE_READWRITE = 0x0900; // FeliCa Lite RW権限
 
-    static final String TAG = "FeliCaLib";
-
-    /**
-     * コマンドを実行します
-     *
-     * @param tag           Tagクラスの参照をセットします
-     * @param commandPacket 実行するコマンドパケットをセットします
-     * @return CommandResponse コマンドの実行結果が戻ります
-     * @throws FeliCaException コマンドの発行に失敗した場合にスローされます
-     * @throws TagLostException if the tag went out of the field
-     */
-    static CommandResponse execute(Tag tag, CommandPacket commandPacket)
+    static CommandResponse execute(Tag tag, byte commandCode, IDm idm, final byte... data)
             throws FeliCaException, TagLostException {
-        byte[] result = executeRaw(tag, commandPacket.getBytes());
+        int length = idm.getBytes().length + data.length + 2;
+        ByteBuffer buff = ByteBuffer.allocate(length);
+        buff.put((byte) length).put(commandCode).put(idm.getBytes()).put(data);
+        byte[] result = executeRaw(tag, buff.array());
+        return new CommandResponse(result);
+    }
+
+    static CommandResponse execute(Tag tag, byte commandCode, final byte... data)
+            throws FeliCaException, TagLostException {
+        int length = data.length + 2;
+        ByteBuffer buff = ByteBuffer.allocate(length);
+        buff.put((byte) length).put(commandCode).put(data);
+
+        byte[] result = executeRaw(tag, buff.array());
         return new CommandResponse(result);
     }
 
@@ -141,82 +143,6 @@ public final class FeliCaLib {
             throw e;
         } catch (IOException e) {
             throw new FeliCaException(e);
-        }
-    }
-
-    /**
-     * FeliCa コマンドパケットクラスを提供します
-     *
-     * @author Kazzz
-     * @since Android API Level 9
-     */
-    public static class CommandPacket {
-        protected final int length;     //コマンド全体のデータ長
-        protected final byte commandCode;//コマンドコード
-        protected final IDm idm;        //FeliCa IDm
-        protected final byte[] data;     //コマンドデータ
-
-        /**
-         * コンストラクタ
-         *
-         * @param commandCode コマンドコードをセット
-         * @param data        コマンドデータをセット (IDmを含みます)
-         * @throws FeliCaException
-         */
-        CommandPacket(byte commandCode, final byte... data) throws FeliCaException {
-            //if (!commandMap.containsKey(commandCode))
-            //    throw new FeliCaException("commandCode : " + commandCode + " not supported.");
-            this.commandCode = commandCode;
-            if (data.length >= 8) {
-                this.idm = new IDm(Arrays.copyOfRange(data, 0, 8));
-                this.data = Arrays.copyOfRange(data, 8, data.length);
-            } else {
-                this.idm = null;
-                this.data = Arrays.copyOfRange(data, 0, data.length);
-            }
-            this.length = data.length + 2;
-
-            if (this.length > 255)
-                throw new FeliCaException("command data too long (less than 255Byte)");
-        }
-
-        /**
-         * コンストラクタ
-         *
-         * @param commandCode コマンドコードをセット
-         * @param idm         システム製造ID(IDm)をセット
-         * @param data        コマンドデータをセット
-         * @throws FeliCaException
-         */
-        CommandPacket(byte commandCode, IDm idm, final byte... data) throws FeliCaException {
-            //if (!commandMap.containsKey(commandCode))
-            //    throw new FeliCaException("commandCode : " + commandCode + " not supported.");
-            this.commandCode = commandCode;
-            this.idm = idm;
-            this.data = data;
-            this.length = idm.getBytes().length + data.length + 2;
-            if (this.length > 255)
-                throw new FeliCaException("command data too long (less than 255byte)");
-        }
-
-        public IDm getIDm() {
-            return this.idm;
-        }
-
-        /**
-         * バイト列表現を戻します
-         *
-         * @return byte[] このデータのバイト列表現を戻します
-         */
-        public byte[] getBytes() {
-            ByteBuffer buff = ByteBuffer.allocate(this.length);
-            byte length = (byte) this.length;
-            if (this.idm != null) {
-                buff.put(length).put(this.commandCode).put(this.idm.getBytes()).put(this.data);
-            } else {
-                buff.put(length).put(this.commandCode).put(this.data);
-            }
-            return buff.array();
         }
     }
 
@@ -500,7 +426,6 @@ public final class FeliCaLib {
 
     public static class PollingResponse extends CommandResponse {
         final PMm pmm;
-        final byte[] requestData;
 
         /**
          * コンストラクタ
@@ -511,10 +436,8 @@ public final class FeliCaLib {
             super(response);
             if (this.data != null && this.data.length >= 8) {
                 this.pmm = new PMm(Arrays.copyOfRange(this.data, 0, 8));
-                this.requestData = Arrays.copyOfRange(this.data, 8, data.length);
             } else {
                 this.pmm = null;
-                this.requestData = null;
             }
         }
 

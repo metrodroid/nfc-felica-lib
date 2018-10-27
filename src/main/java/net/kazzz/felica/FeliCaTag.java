@@ -15,7 +15,6 @@ import android.nfc.Tag;
 import android.nfc.TagLostException;
 import android.util.Log;
 
-import net.kazzz.felica.FeliCaLib.CommandPacket;
 import net.kazzz.felica.FeliCaLib.IDm;
 import net.kazzz.felica.FeliCaLib.PMm;
 import net.kazzz.felica.FeliCaLib.ServiceCode;
@@ -74,13 +73,11 @@ public final class FeliCaTag {
         if (this.nfcTag == null) {
             throw new FeliCaException("tagService is null. no polling execution");
         }
-        CommandPacket polling =
-                new CommandPacket(COMMAND_POLLING
-                        , (byte) (systemCode >> 8)   // System code (upper byte)
-                        , (byte) (systemCode & 0xff) // System code (lower byte)
-                        , (byte) 0x01                // Request code (system code request)
-                        , (byte) 0x00);              // Maximum number of slots possible to respond
-        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, polling);
+        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, COMMAND_POLLING
+                , (byte) (systemCode >> 8)   // System code (upper byte)
+                , (byte) (systemCode & 0xff) // System code (lower byte)
+                , (byte) 0x01                // Request code (system code request)
+                , (byte) 0x00);
         FeliCaLib.PollingResponse pr = new FeliCaLib.PollingResponse(r);
         this.idm = pr.getIDm();
         this.pmm = pr.getPMm();
@@ -127,8 +124,7 @@ public final class FeliCaTag {
      */
     public final SystemCode[] getSystemCodeList() throws FeliCaException, TagLostException {
         //request systemCode 
-        CommandPacket reqSystemCode = new CommandPacket(COMMAND_REQUEST_SYSTEMCODE, idm);
-        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, reqSystemCode);
+        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, COMMAND_REQUEST_SYSTEMCODE, idm);
 
         byte[] retBytes = r.getBytes();
         if (retBytes == null) {
@@ -182,10 +178,8 @@ public final class FeliCaTag {
      * @throws FeliCaException
      */
     protected byte[] doSearchServiceCode(int index) throws FeliCaException, TagLostException {
-        CommandPacket reqServiceCode =
-                new CommandPacket(COMMAND_SEARCH_SERVICECODE, idm
-                        , (byte) (index & 0xff), (byte) (index >> 8));
-        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, reqServiceCode);
+        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, COMMAND_SEARCH_SERVICECODE, idm
+                , (byte) (index & 0xff), (byte) (index >> 8));
         byte[] bytes = r.getBytes();
         if (bytes == null || bytes.length <= 0 || bytes[1] != (byte) 0x0b) { // 正常応答かどうか
             Log.w(TAG, "Response code is not 0x0b");
@@ -211,14 +205,12 @@ public final class FeliCaTag {
         }
         // read without encryption
         byte[] bytes = serviceCode.getBytes();
-        CommandPacket readWoEncrypt =
-                new CommandPacket(COMMAND_READ_WO_ENCRYPTION, idm
-                        , (byte) 0x01         // サービス数
-                        , bytes[1]
-                        , bytes[0]             // サービスコード (little endian)
-                        , (byte) 0x01                 // 同時読み込みブロック数
-                        , (byte) 0x80, addr);       // ブロックリスト
-        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, readWoEncrypt);
+        FeliCaLib.CommandResponse r = FeliCaLib.execute(this.nfcTag, COMMAND_READ_WO_ENCRYPTION, idm
+                , (byte) 0x01         // サービス数
+                , bytes[1]
+                , bytes[0]             // サービスコード (little endian)
+                , (byte) 0x01                 // 同時読み込みブロック数
+                , (byte) 0x80, addr);
         return new FeliCaLib.ReadResponse(r);
     }
 
