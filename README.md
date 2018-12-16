@@ -1,5 +1,10 @@
 # nfc-felica-lib
 
+**This repository is no longer maintained.** The code here [has been merged
+into Metrodroid proper][5].
+
+## Introduction
+
 [![Build Status](https://travis-ci.org/metrodroid/nfc-felica-lib.svg?branch=metrodroid-master)](https://travis-ci.org/metrodroid/nfc-felica-lib)
 
 An Android library for accessing [Sony FeliCa contactless smart cards][0] (NFC). This card is
@@ -57,3 +62,4 @@ limitations under the License.
 [2]: https://github.com/micolous/metrodroid
 [3]: https://github.com/Kazzz
 [4]: https://github.com/micolous
+[5]: https://github.com/micolous/metrodroid/pull/255
